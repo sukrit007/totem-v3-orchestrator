@@ -1,0 +1,28 @@
+{
+  "name": "totem-v3-orchestrator",
+  "version": "1.0.0",
+  "description": "Totem V3 Git Hooks handler",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/totem/totem-v3-orchestrator.git"
+  },
+  "keywords": [
+    "totem",
+    "v3",
+    "nodejs",
+    "lambda",
+    "sam"
+  ],
+  "author": "Sukrit Khera",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/totem/totem-v3-orchestrator/issues"
+  },
+  "homepage": "https://github.com/totem/totem-v3-orchestrator#readme",
+  "dependencies": {
+  }
+}

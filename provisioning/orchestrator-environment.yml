@@ -1,0 +1,26 @@
+# This template sets up IAM roles/profiles and dependencies for ECS Cluster
+AWSTemplateFormatVersion: '2010-09-09'
+
+Resources:
+
+  OrchestratorLambdaRole:
+    # See: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/transform-aws-serverless.html
+    Type: AWS::IAM::Role
+    Properties:
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+
+Outputs:
+  OrchestratorLambdaRoleArn:
+    Value: !GetAtt OrchestratorLambdaRole.Arn
+    Export:
+      Name: !Sub ${AWS::StackName}-OrchestratorLambdaRoleArn
+
