@@ -35,10 +35,16 @@ Parameters:
     Default: 'totem-global'
 
   OrchestratorEnvironmentStack:
-    Description: Name of orchestrator environment stack
+    Description: Name of the orchestrator environment stack
     Type: String
     MinLength: 1
     Default: 'totem-orchestrator-environment'
+
+  OrchestratorStackName:
+    Description: Name of the orchestrator stack to be created / updated in the pipeline
+    Type: String
+    MinLength: 1
+    Default: 'totem-orchestrator-development'
 
 Resources:
   CodeBuild:
@@ -108,7 +114,7 @@ Resources:
 
         - Name: Deploy
           Actions:
-            - Name: SAMDeploy
+            - Name: SAMCreateChangeSet
               ActionTypeId:
                 Category: Deploy
                 Owner: "AWS"
@@ -118,10 +124,10 @@ Resources:
                 - Name: build
               OutputArtifacts: []
               Configuration:
-                ActionMode: CREATE_UPDATE
+                ActionMode: CHANGE_SET_REPLACE
                 RoleArn:
                   Fn::ImportValue: !Sub "${OrchestratorEnvironmentStack}-LambdaDeployRoleArn"
-                StackName: !Sub totem-v3-orchestrator-${GitBranch}
+                StackName: !Ref OrchestratorStackName
                 TemplatePath: "build::packaged-template.yml"
                 ParameterOverrides: !Sub |
                   {
@@ -129,3 +135,15 @@ Resources:
                     "GlobalStack": "${GlobalStack}"
                   }
               RunOrder: 1
+
+            - Name: SAMExecuteChangeSet
+              ActionTypeId:
+                Category: Deploy
+                Owner: "AWS"
+                Provider: "CloudFormation"
+                Version: 1
+              OutputArtifacts: []
+              Configuration:
+                ActionMode: CHANGE_SET_EXECUTE
+                StackName: !Ref OrchestratorStackName
+              RunOrder: 2
