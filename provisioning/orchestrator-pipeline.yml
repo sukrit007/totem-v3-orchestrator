@@ -1,0 +1,135 @@
+# Cloudformation template for automated orchestrator builds
+Parameters:
+  CodePipelineBucketName:
+    Type: String
+    Description: S3 bucket used for uploading artifacts for CodePipeline
+    MinLength: 1
+    Default: totem-v3
+
+  GitBranch:
+    Type: String
+    Description: Git branch for source repository
+    MinLength: 1
+    Default: feature_git-workflow
+
+  GitOwner:
+    Type: String
+    Description: Owner of the github repository
+    Default: totem
+
+  GitRepo:
+    Type: String
+    Description: Orchestrator repository
+    Default: totem-v3-orchestrator
+
+  GithubOauthToken:
+    Type: String
+    NoEcho: true
+    Description: Github Oauthtoken
+    MinLength: 1
+
+  GlobalStack:
+    Description: Name of totem global stack
+    Type: String
+    MinLength: 1
+    Default: 'totem-global'
+
+  OrchestratorEnvironmentStack:
+    Description: Name of orchestrator environment stack
+    Type: String
+    MinLength: 1
+    Default: 'totem-orchestrator-environment'
+
+Resources:
+  CodeBuild:
+    Type: "AWS::CodeBuild::Project"
+    Properties:
+      Artifacts:
+        Type: CODEPIPELINE
+      Description: !Sub "Totem-v3 Orchestrator ${GitBranch} build"
+      Environment:
+        Type: LINUX_CONTAINER
+        Image: "aws/codebuild/eb-nodejs-6.10.0-amazonlinux-64:4.0.0"
+        ComputeType: BUILD_GENERAL1_SMALL
+        EnvironmentVariables:
+          - Name: TOTEM_BUCKET
+            Value:
+              Fn::ImportValue: !Sub "${GlobalStack}-TotemBucket"
+      ServiceRole:
+        Fn::ImportValue: !Sub "${OrchestratorEnvironmentStack}-CodeBuildRole"
+      Source:
+        Type: CODEPIPELINE
+      TimeoutInMinutes: 5
+
+  CodePipeline:
+    Type: "AWS::CodePipeline::Pipeline"
+    DependsOn: CodeBuild
+    Properties:
+      ArtifactStore:
+        Type: S3
+        Location:
+          Fn::ImportValue: !Sub "${GlobalStack}-TotemBucket"
+      RoleArn:
+        Fn::ImportValue: !Sub "${OrchestratorEnvironmentStack}-CodePipelineRoleArn"
+      Stages:
+        - Name: Source
+          Actions:
+            - Name: source
+              ActionTypeId:
+                Category: Source
+                Owner: "ThirdParty"
+                Provider: "GitHub"
+                Version: 1
+              InputArtifacts: []
+              OutputArtifacts:
+                - Name: orchestrator-source
+              Configuration:
+                Owner: !Ref GitOwner
+                Repo: !Ref GitRepo
+                Branch: !Ref GitBranch
+                OAuthToken: !Ref GithubOauthToken
+              RunOrder: 1
+
+        - Name: Build
+          Actions:
+            - Name: CodeBuild
+              ActionTypeId:
+                Category: Build
+                Owner: "AWS"
+                Provider: "CodeBuild"
+                Version: 1
+              InputArtifacts:
+                - Name: orchestrator-source
+              OutputArtifacts:
+                - Name: orchestrator-build
+              Configuration:
+                ProjectName: !Ref CodeBuild
+              RunOrder: 1
+
+#        - Name: Deploy
+#          Actions:
+#            - Name: ECSDeploy
+#              ActionTypeId:
+#                Category: Deploy
+#                Owner: "AWS"
+#                Provider: "CloudFormation"
+#                Version: 1
+#              InputArtifacts:
+#                - Name: totem-demo-build
+#                - Name: configs
+#              OutputArtifacts: []
+#              Configuration:
+#                ActionMode: CREATE_UPDATE
+#                RoleArn: !Ref CfnEcsDeployRoleArn
+#                StackName: !Sub totem-demo-${GitBranch}
+#                TemplatePath: "configs::cloudformation/totem-demo-service.yml"
+#                ParameterOverrides: !Sub |
+#                  {
+#                    "Tag" : { "Fn::GetParam" : [ "totem-demo-build", "build.json", "Tag" ] },
+#                    "DesiredCount": "${InstanceCount}",
+#                    "Cluster": "${EcsCluster}",
+#                    "VpcId": "${VpcId}",
+#                    "PrivateALBHttpListener": "${PrivateALBHttpListener}",
+#                    "Repository": "${RepositoryName}"
+#                  }
+#              RunOrder: 1

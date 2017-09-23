@@ -1,5 +1,12 @@
-# This template sets up IAM roles/profiles and dependencies for ECS Cluster
+# This template sets up IAM roles/profiles and dependencies for Totem-V3 Orchestrator
 AWSTemplateFormatVersion: '2010-09-09'
+
+Parameters:
+  GlobalStack:
+    Description: Name of totem global stack
+    Type: String
+    MinLength: 1
+    Default: 'totem-global'
 
 Resources:
 
@@ -18,9 +25,102 @@ Resources:
             Action:
               - 'sts:AssumeRole'
 
+  CodeBuildRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - codebuild.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Path: /
+      Policies:
+        - PolicyName: code-build
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'logs:CreateLogGroup'
+                  - 'logs:CreateLogStream'
+                  - 'logs:PutLogEvents'
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - 'codepipeline:GetPipelineState'
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - 's3:PutObject'
+                  - 's3:GetObject'
+                  - 's3:GetObjectVersion'
+                Resource:
+                  Fn::Join:
+                    - ""
+                    - - "arn:aws:s3:::"
+                      - Fn::ImportValue: !Sub "${GlobalStack}-TotemBucket"
+                      - "*"
+
+  CodePipelineRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - codepipeline.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Path: /
+      Policies:
+        - PolicyName: code-pipeline
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'lambda:InvokeFunction'
+                  - 'lambda:ListFunctions'
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - 'codebuild:BatchGetBuilds'
+                  - 'codebuild:StartBuild'
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - 'cloudformation:*'
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - 'iam:PassRole'
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - 's3:Get*'
+                  - 's3:PutObject'
+                Resource:
+                  Fn::Join:
+                    - ""
+                    - - "arn:aws:s3:::"
+                      - Fn::ImportValue: !Sub "${GlobalStack}-TotemBucket"
+                      - "*"
+
 Outputs:
   OrchestratorLambdaRoleArn:
     Value: !GetAtt OrchestratorLambdaRole.Arn
     Export:
       Name: !Sub ${AWS::StackName}-OrchestratorLambdaRoleArn
 
+  CodeBuildRole:
+    Value: !Ref CodeBuildRole
+    Export:
+      Name: !Sub ${AWS::StackName}-CodeBuildRole
+
+
+  CodePipelineRoleArn:
+    Value: !GetAtt CodePipelineRole.Arn
+    Export:
+      Name: !Sub ${AWS::StackName}-CodePipelineRoleArn

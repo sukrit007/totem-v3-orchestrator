@@ -23,7 +23,7 @@ Resources:
       Environment:
         Variables: {}
       Role:
-        Fn::ImportValue: !Sub "${OrchestratorEnvironmentStack}-SamGitHooksRoleArn"
+        Fn::ImportValue: !Sub "${OrchestratorEnvironmentStack}-OrchestratorLambdaRoleArn"
       Events:
         HttpPost:
           Type: Api

@@ -58,7 +58,7 @@ typings/
 .env
 
 # Cloudformation
-packaged-template.yml
+packaged-*.yml
 
 # Intellij
 .idea
