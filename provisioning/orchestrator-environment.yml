@@ -63,6 +63,48 @@ Resources:
                       - Fn::ImportValue: !Sub "${GlobalStack}-TotemBucket"
                       - "*"
 
+  LambdaDeployRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - cloudformation.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Path: /
+      Policies:
+        - PolicyName: lamda-deploy
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'lambda:*'
+                  - 'apigateway:*'
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - 'logs:Describe*'
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - 'iam:PassRole'
+                Resource: '*'
+
+              - Effect: Allow
+                Action:
+                  - 's3:PutObject'
+                  - 's3:GetObject'
+                  - 's3:GetObjectVersion'
+                Resource:
+                  Fn::Join:
+                    - ""
+                    - - "arn:aws:s3:::"
+                      - Fn::ImportValue: !Sub "${GlobalStack}-TotemBucket"
+                      - "*"
+
   CodePipelineRole:
     Type: AWS::IAM::Role
     Properties:
@@ -124,3 +166,8 @@ Outputs:
     Value: !GetAtt CodePipelineRole.Arn
     Export:
       Name: !Sub ${AWS::StackName}-CodePipelineRoleArn
+
+  LambdaDeployRoleArn:
+    Value: !GetAtt LambdaDeployRole.Arn
+    Export:
+      Name: !Sub ${AWS::StackName}-LambdaDeployRoleArn

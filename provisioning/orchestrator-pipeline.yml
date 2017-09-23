@@ -82,7 +82,7 @@ Resources:
                 Version: 1
               InputArtifacts: []
               OutputArtifacts:
-                - Name: orchestrator-source
+                - Name: source
               Configuration:
                 Owner: !Ref GitOwner
                 Repo: !Ref GitRepo
@@ -99,37 +99,33 @@ Resources:
                 Provider: "CodeBuild"
                 Version: 1
               InputArtifacts:
-                - Name: orchestrator-source
+                - Name: source
               OutputArtifacts:
-                - Name: orchestrator-build
+                - Name: build
               Configuration:
                 ProjectName: !Ref CodeBuild
               RunOrder: 1
 
-#        - Name: Deploy
-#          Actions:
-#            - Name: ECSDeploy
-#              ActionTypeId:
-#                Category: Deploy
-#                Owner: "AWS"
-#                Provider: "CloudFormation"
-#                Version: 1
-#              InputArtifacts:
-#                - Name: totem-demo-build
-#                - Name: configs
-#              OutputArtifacts: []
-#              Configuration:
-#                ActionMode: CREATE_UPDATE
-#                RoleArn: !Ref CfnEcsDeployRoleArn
-#                StackName: !Sub totem-demo-${GitBranch}
-#                TemplatePath: "configs::cloudformation/totem-demo-service.yml"
-#                ParameterOverrides: !Sub |
-#                  {
-#                    "Tag" : { "Fn::GetParam" : [ "totem-demo-build", "build.json", "Tag" ] },
-#                    "DesiredCount": "${InstanceCount}",
-#                    "Cluster": "${EcsCluster}",
-#                    "VpcId": "${VpcId}",
-#                    "PrivateALBHttpListener": "${PrivateALBHttpListener}",
-#                    "Repository": "${RepositoryName}"
-#                  }
-#              RunOrder: 1
+        - Name: Deploy
+          Actions:
+            - Name: SAMDeploy
+              ActionTypeId:
+                Category: Deploy
+                Owner: "AWS"
+                Provider: "CloudFormation"
+                Version: 1
+              InputArtifacts:
+                - Name: build
+              OutputArtifacts: []
+              Configuration:
+                ActionMode: CREATE_UPDATE
+                RoleArn:
+                  Fn::ImportValue: !Sub "${OrchestratorEnvironmentStack}-LambdaDeployRoleArn"
+                StackName: !Sub totem-v3-orchestrator-${GitBranch}
+                TemplatePath: "build::packaged-template.yml"
+                ParameterOverrides: !Sub |
+                  {
+                    "OrchestratorEnvironmentStack": "${OrchestratorEnvironmentStack}",
+                    "GlobalStack": "${GlobalStack}"
+                  }
+              RunOrder: 1
