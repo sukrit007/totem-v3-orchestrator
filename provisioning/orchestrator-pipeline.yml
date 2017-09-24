@@ -40,11 +40,25 @@ Parameters:
     MinLength: 1
     Default: 'totem-orchestrator-environment'
 
-  OrchestratorStackName:
-    Description: Name of the orchestrator stack to be created / updated in the pipeline
+  Environment:
+    Description: Orchestrator environment (development, production, etc)
     Type: String
     MinLength: 1
-    Default: 'totem-orchestrator-development'
+    Default: 'development'
+
+  App:
+    Description: Application name for orchestrator stack
+    Type: String
+    MinLength: 1
+    Default: 'totem-v3-orchestrator'
+
+  Client:
+    Description: Client for orchestrator stack
+    Type: String
+    MinLength: 1
+    Default: 'totem'
+
+
 
 Resources:
   CodeBuild:
@@ -61,6 +75,19 @@ Resources:
           - Name: TOTEM_BUCKET
             Value:
               Fn::ImportValue: !Sub "${GlobalStack}-TotemBucket"
+          - Name: APP
+            Value: !Ref App
+          - Name: CLIENT
+            Value: !Ref Client
+          - Name: ENVIRONMENT
+            Value: !Ref Environment
+          - Name: GIT_OWNER
+            Value: !Ref GitOwner
+          - Name: GIT_REPO
+            Value: !Ref GitRepo
+          - Name: GIT_BRANCH
+            Value: !Ref GitBranch
+
       ServiceRole:
         Fn::ImportValue: !Sub "${OrchestratorEnvironmentStack}-CodeBuildRole"
       Source:
@@ -127,9 +154,10 @@ Resources:
                 ActionMode: CHANGE_SET_REPLACE
                 RoleArn:
                   Fn::ImportValue: !Sub "${OrchestratorEnvironmentStack}-LambdaDeployRoleArn"
-                StackName: !Ref OrchestratorStackName
+                StackName: !Sub "totem-orchestrator-${Environment}"
                 ChangeSetName: LamdaDeploy
                 TemplatePath: "build::packaged-template.yml"
+                TemplateConfiguration: "build::template-config.json"
                 ParameterOverrides: !Sub |
                   {
                     "OrchestratorEnvironmentStack": "${OrchestratorEnvironmentStack}",
@@ -146,6 +174,6 @@ Resources:
               OutputArtifacts: []
               Configuration:
                 ActionMode: CHANGE_SET_EXECUTE
-                StackName: !Ref OrchestratorStackName
+                StackName: !Sub "totem-orchestrator-${Environment}"
                 ChangeSetName: LamdaDeploy
               RunOrder: 2

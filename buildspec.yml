@@ -9,7 +9,23 @@ phases:
             --s3-bucket $TOTEM_BUCKET
             --output-template-file packaged-template.yml
             --s3-prefix=cloudformation/sam
+      - |
+          cat <<END>template-config.json
+          {
+            "Tags" : {
+                "app" : "$APP",
+                "env" : "$ENVIRONMENT",
+                "client" : "$CLIENT",
+                "stacktype" : "totem-orchestrator",
+                "git-owner" : "$GIT_OWNER",
+                "git-repo" : "$GIT_OWNER",
+                "git-branch" : "$GIT_OWNER",
+                "git-commit": "$CODEBUILD_RESOLVED_SOURCE_VERSION"
+              }
+          }
+          END
 artifacts:
   type: zip
   files:
     - packaged-template.yml
+    - template-config.json

@@ -104,6 +104,10 @@ Resources:
                     - - "arn:aws:s3:::"
                       - Fn::ImportValue: !Sub "${GlobalStack}-TotemBucket"
                       - "*"
+              - Effect: Allow
+                Action:
+                  - 'cloudformation:*'
+                Resource: '*'
 
   CodePipelineRole:
     Type: AWS::IAM::Role
