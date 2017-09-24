@@ -15,12 +15,17 @@ Parameters:
     Default: 'totem-orchestrator-environment'
 
 Resources:
-  ApiGatewayProd:
+  ApiGateway:
     Type: AWS::Serverless::Api
     Properties:
       StageName: Prod
       DefinitionUri: swagger.yml
-  WebHooks:
+      Variables:
+        WebhooksLambda: !Ref WebHooksLambda
+        AwsRegion: !Ref AWS::Region
+        AwsAccountId: !Ref AWS::AccountId
+
+  WebHooksLambda:
     Type: AWS::Serverless::Function
     Properties:
       Handler: index.handler
