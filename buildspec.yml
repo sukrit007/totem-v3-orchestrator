@@ -18,8 +18,8 @@ phases:
                 "client" : "$CLIENT",
                 "stacktype" : "totem-orchestrator",
                 "git-owner" : "$GIT_OWNER",
-                "git-repo" : "$GIT_OWNER",
-                "git-branch" : "$GIT_OWNER",
+                "git-repo" : "$GIT_REPO",
+                "git-branch" : "$GIT_BRANCH",
                 "git-commit": "$CODEBUILD_RESOLVED_SOURCE_VERSION"
               }
           }
