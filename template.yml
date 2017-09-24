@@ -19,9 +19,6 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       StageName: Prod
-      # DefinitionUri: swagger.yml
-      # Variables:
-      #  WebhooksLambdaUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${WebHooksLambda.Arn}/invocations"
       DefinitionBody:
         swagger: 2.0
         basePath: /
