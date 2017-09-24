@@ -21,9 +21,7 @@ Resources:
       StageName: Prod
       DefinitionUri: swagger.yml
       Variables:
-        WebhooksLambda: !Ref WebHooksLambda
-        AwsRegion: !Ref AWS::Region
-        AwsAccountId: !Ref AWS::AccountId
+        WebhooksLambdaUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${WebHooksLambda.Arn}/invocations"
 
   WebHooksLambda:
     Type: AWS::Serverless::Function
@@ -40,3 +38,13 @@ Resources:
           Properties:
             Path: '/hooks/github'
             Method: post
+
+Outputs:
+  ApiUrl:
+    Description: URL of your API endpoint
+    Value: !Join
+      - ''
+      - - https://
+        - !Ref ApiGateway
+        - '.execute-api.'
+        - !Ref 'AWS::Region'
