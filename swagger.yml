@@ -1,0 +1,34 @@
+---
+swagger: 2.0
+basePath: /
+info:
+  title: totem-v3-orchestrator API
+  version: 1.0.0
+schemes:
+  - https
+paths:
+  /hooks/github:
+    summary: Handles github webhook
+    description:
+    options:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        202:
+          description: 202 Accepted Response
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: string
+            Access-Control-Allow-Methods:
+              type: string
+            Access-Control-Allow-Headers:
+              type: string
+
+definitions:
+  Empty:
+    type: object
+    title: Empty Schema
