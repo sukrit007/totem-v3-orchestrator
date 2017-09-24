@@ -40,7 +40,7 @@ Resources:
               produces:
                 - application/json
               responses:
-                202:
+                "202":
                   description: 202 Accepted Response
                   schema:
                     $ref: "#/definitions/Empty"
