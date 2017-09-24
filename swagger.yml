@@ -8,9 +8,9 @@ schemes:
   - https
 paths:
   /hooks/github:
-    summary: Handles github webhook
-    description:
-    options:
+    post:
+      summary: Handles github webhook
+      description: Handles github webhook
       consumes:
         - application/json
       produces:
@@ -20,21 +20,14 @@ paths:
           description: 202 Accepted Response
           schema:
             $ref: "#/definitions/Empty"
-          headers:
-            Access-Control-Allow-Origin:
-              type: string
-            Access-Control-Allow-Methods:
-              type: string
-            Access-Control-Allow-Headers:
-              type: string
-    x-amazon-apigateway-integration:
-      responses:
-        default:
-          statusCode: 202
-      uri: arn:aws:apigateway:${stageVariables.AwsRegion}:lambda:path/2015-03-31/functions/arn:aws:lambda:${stageVariables.AwsRegion}:${stageVariables.AwsAccountId}:function:${stageVariables.WebhooksLambda}/invocations
-      passthroughBehavior: when_no_match
-      httpMethod: POST
-      type: aws_proxy
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: 202
+        uri: arn:aws:apigateway:${stageVariables.AwsRegion}:lambda:path/2015-03-31/functions/arn:aws:lambda:${stageVariables.AwsRegion}:${stageVariables.AwsAccountId}:function:${stageVariables.WebhooksLambda}/invocations
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: aws_proxy
 
 definitions:
   Empty:
