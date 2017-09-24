@@ -19,9 +19,41 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       StageName: Prod
-      DefinitionUri: swagger.yml
-      Variables:
-        WebhooksLambdaUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${WebHooksLambda.Arn}/invocations"
+      DefinitionBody:
+        swagger: 2.0
+        basePath: /
+        info:
+          title: totem-v3-orchestrator API
+          version: 1.0.0
+        schemes:
+          - https
+        paths:
+          /hooks/github:
+            post:
+              summary: Handles github webhook
+              description: Handles github webhook
+              consumes:
+                - application/json
+              produces:
+                - application/json
+              responses:
+                "202":
+                  description: 202 Accepted Response
+                  schema:
+                    $ref: "#/definitions/Empty"
+              x-amazon-apigateway-integration:
+                responses:
+                  default:
+                    statusCode: 202
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${WebHooksLambda.Arn}/invocations"
+                passthroughBehavior: when_no_match
+                httpMethod: POST
+                type: aws_proxy
+
+        definitions:
+          Empty:
+            type: object
+            title: Empty Schema
 
   WebHooksLambda:
     Type: AWS::Serverless::Function
