@@ -1,6 +1,6 @@
 ---
 swagger: 2.0
-basePath: /
+basePath: /Prod
 info:
   title: totem-v3-orchestrator API
   version: 1.0.0
