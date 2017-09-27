@@ -154,6 +154,7 @@ Outputs:
         - !Ref ApiGateway
         - '.execute-api.'
         - !Ref 'AWS::Region'
+        - .amazonaws.com/prod
 
   SwaggerUrl:
     Description: Swagger URL of your API endpoint
