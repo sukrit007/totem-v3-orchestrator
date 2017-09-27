@@ -36,7 +36,7 @@ Resources:
         swagger: 2.0
         basePath: /
         info:
-          title: !Sub totem-v3-orchestrator-${Environment}
+          # title: !Sub totem-v3-orchestrator-${Environment}
           description: !Sub Totem V3 Orchestrator API ${Environment} (${GitBranch})
           version: 1.0.0
         schemes:
@@ -153,7 +153,7 @@ Outputs:
         - !Ref 'AWS::Region'
 
   SwaggerUrl:
-    Description: URL of your API endpoint apigateway.us-west-2.amazonaws.com/restapis/ago90g4iff/stages/prod/exports/swagger
+    Description: Swagger URL of your API endpoint
     Value: !Join
       - ''
       - - https://apigateway.
