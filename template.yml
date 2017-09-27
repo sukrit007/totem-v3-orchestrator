@@ -14,16 +14,30 @@ Parameters:
     MinLength: 1
     Default: 'totem-orchestrator-environment'
 
+  Environment:
+    Description: Orchestrator environment (development, production, etc)
+    Type: String
+    MinLength: 1
+    Default: 'development'
+
+  GitBranch:
+    Type: String
+    Description: Git branch for source repository
+    MinLength: 1
+    Default: feature_git-workflow
+
+
 Resources:
   ApiGateway:
     Type: AWS::Serverless::Api
     Properties:
-      StageName: Prod
+      StageName: prod
       DefinitionBody:
         swagger: 2.0
         basePath: /
         info:
-          title: totem-v3-orchestrator API
+          title: !Sub totem-v3-orchestrator-${Environment}
+          description: !Sub Totem V3 Orchestrator API ${Environment} ($GitBranch)
           version: 1.0.0
         schemes:
           - https

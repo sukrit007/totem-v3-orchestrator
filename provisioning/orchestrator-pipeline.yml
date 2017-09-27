@@ -161,7 +161,9 @@ Resources:
                 ParameterOverrides: !Sub |
                   {
                     "OrchestratorEnvironmentStack": "${OrchestratorEnvironmentStack}",
-                    "GlobalStack": "${GlobalStack}"
+                    "GlobalStack": "${GlobalStack}",
+                    "Environment": "${Environment}",
+                    "GitBranch": "${GitBranch}"
                   }
               RunOrder: 1
 
