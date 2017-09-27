@@ -36,7 +36,7 @@ Resources:
         swagger: 2.0
         basePath: /
         info:
-          # title: !Sub totem-v3-orchestrator-${Environment}
+          title: !Sub totem-v3-orchestrator-${Environment}
           description: !Sub Totem V3 Orchestrator API ${Environment} (${GitBranch})
           version: 1.0.0
         schemes:
@@ -131,16 +131,19 @@ Resources:
           Properties:
             Path: '/'
             Method: get
+            RestApiId: !Ref ApiGateway
         WebhookApi:
           Type: Api
           Properties:
             Path: '/hooks/github'
             Method: post
+            RestApiId: !Ref ApiGateway
         SetupApi:
           Type: Api
           Properties:
             Path: '/setup'
             Method: put
+            RestApiId: !Ref ApiGateway
 
 Outputs:
   ApiUrl:
