@@ -37,7 +37,7 @@ Resources:
         basePath: /
         info:
           title: !Sub totem-v3-orchestrator-${Environment}
-          description: !Sub Totem V3 Orchestrator API ${Environment} ($GitBranch)
+          description: !Sub Totem V3 Orchestrator API ${Environment} (${GitBranch})
           version: 1.0.0
         schemes:
           - https
