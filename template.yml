@@ -42,10 +42,34 @@ Resources:
         schemes:
           - https
         paths:
+
+          /:
+            get:
+              summary: API Root
+              description: API Root
+              operationId: getRoot
+              produces:
+                - application/json
+              responses:
+                "202":
+                  description: 202 Accepted Response
+                  schema:
+                    $ref: "#/definitions/Empty"
+              x-amazon-apigateway-integration:
+                responses:
+                  default:
+                    statusCode: 202
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${OrchestratorLambda.Arn}/invocations"
+                passthroughBehavior: when_no_match
+                httpMethod: GET
+                type: aws_proxy
+
+
           /hooks/github:
             post:
               summary: Handles github webhook
               description: Handles github webhook
+              operationId: handleGithubWebhook
               consumes:
                 - application/json
               produces:
@@ -59,9 +83,32 @@ Resources:
                 responses:
                   default:
                     statusCode: 202
-                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${WebHooksLambda.Arn}/invocations"
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${OrchestratorLambda.Arn}/invocations"
                 passthroughBehavior: when_no_match
                 httpMethod: POST
+                type: aws_proxy
+
+          /setup:
+            put:
+              summary: Create or update repository webhooks for totem-v3
+              description: Create or update repository webhooks for totem-v3
+              operationId: setupWebhook
+              consumes:
+                - application/json
+              produces:
+                - application/json
+              responses:
+                "202":
+                  description: 202 Accepted Response
+                  schema:
+                    $ref: "#/definitions/Empty"
+              x-amazon-apigateway-integration:
+                responses:
+                  default:
+                    statusCode: 202
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${OrchestratorLambda.Arn}/invocations"
+                passthroughBehavior: when_no_match
+                httpMethod: PUT
                 type: aws_proxy
 
         definitions:
@@ -69,7 +116,7 @@ Resources:
             type: object
             title: Empty Schema
 
-  WebHooksLambda:
+  OrchestratorLambda:
     Type: AWS::Serverless::Function
     Properties:
       Handler: index.handler
@@ -79,11 +126,21 @@ Resources:
       Role:
         Fn::ImportValue: !Sub "${OrchestratorEnvironmentStack}-OrchestratorLambdaRoleArn"
       Events:
-        HttpPost:
+        RootApi:
+          Type: Api
+          Properties:
+            Path: '/'
+            Method: get
+        WebhookApi:
           Type: Api
           Properties:
             Path: '/hooks/github'
             Method: post
+        SetupApi:
+          Type: Api
+          Properties:
+            Path: '/setup'
+            Method: put
 
 Outputs:
   ApiUrl:
