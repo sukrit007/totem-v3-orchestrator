@@ -47,7 +47,7 @@ Resources:
             get:
               summary: API Root
               description: API Root
-              operationId: getRoot
+              # operationId: getRoot
               produces:
                 - application/json
               responses:
@@ -69,7 +69,7 @@ Resources:
             post:
               summary: Handles github webhook
               description: Handles github webhook
-              operationId: handleGithubWebhook
+              # operationId: handleGithubWebhook
               consumes:
                 - application/json
               produces:
@@ -92,7 +92,7 @@ Resources:
             put:
               summary: Create or update repository webhooks for totem-v3
               description: Create or update repository webhooks for totem-v3
-              operationId: setupWebhook
+              # operationId: setupWebhook
               consumes:
                 - application/json
               produces:
@@ -151,3 +151,13 @@ Outputs:
         - !Ref ApiGateway
         - '.execute-api.'
         - !Ref 'AWS::Region'
+
+  SwaggerUrl:
+    Description: URL of your API endpoint apigateway.us-west-2.amazonaws.com/restapis/ago90g4iff/stages/prod/exports/swagger
+    Value: !Join
+      - ''
+      - - https://apigateway.
+        - !Ref 'AWS::Region'
+        - .amazonaws.com/restapis/
+        - !Ref ApiGateway
+        - /stages/prod/export/swagger
