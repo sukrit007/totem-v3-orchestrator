@@ -31,15 +31,42 @@ See [Totem V3 Architecture](https://github.com/totem/totem-v3/tree/develop/archi
  
 ## Run
  
-[What do people need to do to run this project?]
- 
-[How do people verify that the system is running?]
+### Local
+
+To start API server locally using sam local, run command:
+
+```
+sam local start-api 
+```
  
 ## Test
- 
-[How do people run the tests?]
- 
-[How do people run automated tests?]
+
+To run all tests (unit + integration + api), use command:
+
+```
+gulp test
+```
+
+### Unit Tests
+To run just unit tests, use command:
+
+```
+gulp test:unit
+```
+
+### Integration Tests
+To run just integration tests, use command:
+
+```
+gulp test:integration
+```
+
+### API Tests
+To run just unit tests, use command:
+
+```
+gulp test:api
+```
  
 ## Deploy
  
