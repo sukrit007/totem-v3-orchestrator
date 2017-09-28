@@ -1,6 +1,10 @@
+/**
+ * Entry point for orchestrator lambda function
+ */
 'use strict';
 
-const logger = require('./common/logger');
+const logger = require('./src/common/logger');
+
 
 module.exports.handler = (event, context, callback) => {
   logger.info(`GitHook: Begin: `, event, context);

@@ -6,7 +6,8 @@ Manages the lifecycle for building, deploying  and decommissioning projects on t
 The core documentation for this project can be found in the current repository. For open source documentation see [https://github.com/totem/totem-v3](https://github.com/totem/totem-v3)
 
 ### Architecture
-[TODO: Add link to totem v3 architecture]
+
+See [Totem V3 Architecture](https://github.com/totem/totem-v3/tree/develop/architecture)
 
 ### User Guide
 [TODO: Add link to totem v3 user guide]
