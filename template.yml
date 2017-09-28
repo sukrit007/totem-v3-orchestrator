@@ -102,6 +102,10 @@ Resources:
                   description: 202 Accepted Response
                   schema:
                     $ref: "#/definitions/Empty"
+
+              x-amazon-apigateway-auth:
+                type: aws_iam
+
               x-amazon-apigateway-integration:
                 responses:
                   default:
