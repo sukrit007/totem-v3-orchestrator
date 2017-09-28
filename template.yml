@@ -156,12 +156,6 @@ Outputs:
         - !Ref 'AWS::Region'
         - .amazonaws.com/prod
 
-  SwaggerUrl:
-    Description: Swagger URL of your API endpoint
-    Value: !Join
-      - ''
-      - - https://apigateway.
-        - !Ref 'AWS::Region'
-        - .amazonaws.com/restapis/
-        - !Ref ApiGateway
-        - /stages/prod/export/swagger
+  ApiGateway:
+    Description: ApiGateway API ID
+    Value: !Ref ApiGateway
