@@ -30,7 +30,7 @@ TOTEM_BUCKET="$(aws --profile=$PROFILE cloudformation describe-stack-resource \
   --output text | tail -1 | awk '{print $1}')" &&
 
 aws --profile=$PROFILE cloudformation package \
-  --template-file template.yml \
+  --template-file sam-template.yml \
   --s3-bucket $TOTEM_BUCKET \
   --output-template-file packaged-template.yml \
   --s3-prefix=cloudformation/sam &&
@@ -47,7 +47,13 @@ aws --profile=$PROFILE cloudformation create-change-set \
     "Key=app,Value=totem-v3-orchestrator" \
     "Key=env,Value=development" \
     "Key=client,Value=meltmedia" \
-    "Key=stacktype,Value=totem-orchestrator"
+    "Key=stacktype,Value=totem-orchestrator" &&
+
+sleep 5s &&
+    
+aws --profile=$PROFILE cloudformation execute-change-set \
+  --change-set-name=totem-orchestrator \
+  --stack-name=totem-orchestrator
 ```
  
 ## Setup
