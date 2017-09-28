@@ -19,42 +19,6 @@ The core documentation for this project can be found in the current repository. 
 
 ### Developer Guide
 [TODO: Add link to totem v3 developer guide]
-
-```bash
-set -o pipefail
-PROFILE="contrail"
-TOTEM_BUCKET="$(aws --profile=$PROFILE cloudformation describe-stack-resource \
-  --output json \
-  --logical-resource-id=TotemBucket \
-  --stack-name=totem-global \
-  --output text | tail -1 | awk '{print $1}')" &&
-
-aws --profile=$PROFILE cloudformation package \
-  --template-file sam-template.yml \
-  --s3-bucket $TOTEM_BUCKET \
-  --output-template-file packaged-template.yml \
-  --s3-prefix=cloudformation/sam &&
-  
-OUTPUT_TEMPLATE="$TOTEM_BUCKET/cloudformation/totem-orchestrator.yml" && 
-aws --profile=$PROFILE s3 cp ./packaged-template.yml s3://$OUTPUT_TEMPLATE &&
-
-aws --profile=$PROFILE cloudformation create-change-set \
-  --change-set-type=CREATE \
-  --change-set-name=totem-orchestrator \
-  --template-url=https://s3.amazonaws.com/$OUTPUT_TEMPLATE \
-  --stack-name=totem-orchestrator \
-  --tags \
-    "Key=app,Value=totem-v3-orchestrator" \
-    "Key=env,Value=development" \
-    "Key=client,Value=meltmedia" \
-    "Key=stacktype,Value=totem-orchestrator" &&
-
-sleep 5s &&
-    
-aws --profile=$PROFILE cloudformation execute-change-set \
-  --change-set-name=totem-orchestrator \
-  --stack-name=totem-orchestrator
-```
  
 ## Setup
  
