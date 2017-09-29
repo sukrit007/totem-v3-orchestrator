@@ -23,7 +23,10 @@
     "url": "https://github.com/totem/totem-v3-orchestrator/issues"
   },
   "homepage": "https://github.com/totem/totem-v3-orchestrator#readme",
-  "dependencies": {},
+  "dependencies": {
+    "bottlejs": "^1.6.1",
+    "glob": "^7.1.2"
+  },
   "devDependencies": {
     "chai": "^3.5.0",
     "chai-as-promised": "^7.1.1",
