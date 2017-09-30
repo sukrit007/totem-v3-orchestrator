@@ -1,0 +1,2 @@
+# Orchestrator config file. This is parsed using config module (See https://github.com/lorenwest/node-config)
+{}

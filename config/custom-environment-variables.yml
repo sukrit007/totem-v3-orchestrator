@@ -1,0 +1,3 @@
+# Maps environment variables to orchestrator config (See https://github.com/lorenwest/node-config/wiki/Environment-Variables)
+github:
+  token: GITHUB_TOKEN

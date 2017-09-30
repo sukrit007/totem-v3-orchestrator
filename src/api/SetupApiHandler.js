@@ -10,7 +10,9 @@ const
  */
 class SetupApiHandler {
 
-  constructor() {}
+  constructor(githubService) {
+    this.githubService = githubService;
+  }
 
   handle(event, context, callback) {
     callback(null, {
@@ -19,6 +21,6 @@ class SetupApiHandler {
   }
 }
 
-bottle.service('api-/setup', SetupApiHandler);
+bottle.service('api-/setup', SetupApiHandler, 'github');
 
 module.exports = SetupApiHandler;

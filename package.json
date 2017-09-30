@@ -25,7 +25,10 @@
   "homepage": "https://github.com/totem/totem-v3-orchestrator#readme",
   "dependencies": {
     "bottlejs": "^1.6.1",
-    "glob": "^7.1.2"
+    "config": "^1.26.2",
+    "glob": "^7.1.2",
+    "http-status-code": "^2.1.0",
+    "lodash": "^4.17.4"
   },
   "devDependencies": {
     "chai": "^3.5.0",
