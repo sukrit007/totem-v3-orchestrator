@@ -43,6 +43,11 @@ Resources:
           version: 1.0.0
         schemes:
           - https
+        x-amazon-apigateway-request-validators:
+          - all:
+              validateRequestBody: true
+              validateRequestParameters: true
+        x-amazon-apigateway-request-validator : all
         paths:
 
           /:
@@ -72,6 +77,7 @@ Resources:
               summary: Handles github webhook
               description: Handles github webhook
               operationId: handleGithubWebhook
+              x-amazon-apigateway-request-validator : all
               consumes:
                 - application/json
               produces:
@@ -96,7 +102,16 @@ Resources:
               description: Create or update repository webhooks for totem-v3
               operationId: setupWebhook
               consumes:
+                - application/vnd.totem.orchestrator.setup.v1+json
                 - application/json
+
+              parameters:
+                - name: body
+                  in: body
+                  description: Setup parameters
+                  required: true
+                  schema:
+                    $ref: '#/definitions/SetupParameters'
               produces:
                 - application/json
               responses:
@@ -122,13 +137,37 @@ Resources:
             type: object
             title: Empty Schema
 
+          SetupParameters:
+            type: object
+            title: Setup Parameters
+            properties:
+              owner:
+                type: string
+                description: Git Owner
+              repo:
+                type: string
+                description: Git Repository
+              apiUrl:
+                type: string
+                description: Base API URL for setup
+              type:
+                description: Type of setup
+                default: 'github'
+                enum:
+                  - github
+            required:
+              - owner
+              - repo
+            additionalProperties: false
+
   OrchestratorLambda:
     Type: AWS::Serverless::Function
     Properties:
       Handler: index.handler
       Runtime: nodejs6.10
       Environment:
-        Variables: {}
+        Variables:
+          AWS_REGION: !Ref AWS::Region
       Role:
         Fn::ImportValue: !Sub "${OrchestratorEnvironmentStack}-OrchestratorLambdaRoleArn"
       Events:

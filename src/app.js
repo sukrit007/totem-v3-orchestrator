@@ -9,6 +9,8 @@ const
   bottle = constants.BOTTLE_CONTAINER,
   HttpStatus = require('http-status-codes'),
   glob = require('glob'),
+  config = require('config'),
+  GitHub = require('github-api'),
   path = require('path');
 
 // Load all modules (to ensure all bottle services are loaded)
@@ -18,6 +20,10 @@ glob.sync('./src/**/*.js').forEach(file => {
 
 module.exports.createHandler = () => {
   //Setup common bottle services / values
+
+  bottle.value('githubApi', new GitHub({
+    token: config.github.token
+  }));
 
   // Return the handler
   return (event, context, callback) => {
@@ -34,7 +40,7 @@ module.exports.createHandler = () => {
           })
         });
       }
-      apiHandler.handle(event, context, callback);
+      return apiHandler.handle(event, context, callback);
     }
 
     // All other service events

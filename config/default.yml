@@ -1,2 +1,5 @@
 # Orchestrator config file. This is parsed using config module (See https://github.com/lorenwest/node-config)
-{}
+aws:
+  region: 'us-west-2'
+
+github: {}

@@ -4,6 +4,8 @@ const
   config = require('config'),
   constants = require('../common/constants'),
   bottle = constants.BOTTLE_CONTAINER,
+  HttpStatus = require('http-status-codes'),
+  error = require('./error'),
   _ = require('lodash');
 
 /**
@@ -13,15 +15,23 @@ class GithubService {
 
   /**
    * Initialize GithubService
-   * @param {object}[githubConfig] - Optional github config. If not present, it is read from config module.
-   * @param {string}[githubConfig.token] - GIthub personal access token used for interacting with github
+   * @param {GitHub} githubApi - GitHub API Instance
    */
-  constructor(githubConfig) {
-    this.githubConfig = _.merge({}, config.github, githubConfig);
+  constructor(githubApi) {
+    this.githubApi = githubApi;
   }
 
-  setupWebhook() {
-
+  setupWebhook(owner, repo) {
+    return this.githubApi.getRepo(owner, repo)
+      .listHooks()
+      .catch(err => {
+        if(err.response) {
+          if(err.response.status === HttpStatus.NOT_FOUND) {
+            throw new error.GitRepoNotFound(owner, repo);
+          }
+        }
+        throw err;
+      });
   }
 
   /**
@@ -36,6 +46,6 @@ class GithubService {
 
 }
 
-bottle.service('github', GithubService);
+bottle.service('github', GithubService, 'githubApi');
 
 module.exports = GithubService;
