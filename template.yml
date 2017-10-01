@@ -166,8 +166,7 @@ Resources:
       Handler: index.handler
       Runtime: nodejs6.10
       Environment:
-        Variables:
-          AWS_REGION: !Ref AWS::Region
+        Variables: {}
       Role:
         Fn::ImportValue: !Sub "${OrchestratorEnvironmentStack}-OrchestratorLambdaRoleArn"
       Events:
