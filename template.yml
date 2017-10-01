@@ -47,7 +47,7 @@ Resources:
           - all:
               validateRequestBody: true
               validateRequestParameters: true
-        x-amazon-apigateway-request-validator : all
+        x-amazon-apigateway-request-validator: all
         paths:
 
           /:
