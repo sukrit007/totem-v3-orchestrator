@@ -44,10 +44,10 @@ Resources:
         schemes:
           - https
         x-amazon-apigateway-request-validators:
-          - all:
-              validateRequestBody: true
-              validateRequestParameters: true
-        x-amazon-apigateway-request-validator: all
+          basic:
+            validateRequestBody: true
+            validateRequestParameters: true
+        x-amazon-apigateway-request-validator: basic
         paths:
 
           /:
@@ -104,7 +104,7 @@ Resources:
               consumes:
                 - application/vnd.totem.orchestrator.setup.v1+json
                 - application/json
-
+              x-amazon-apigateway-request-validator: basic
               parameters:
                 - name: body
                   in: body
