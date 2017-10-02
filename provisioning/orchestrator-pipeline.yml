@@ -163,7 +163,8 @@ Resources:
                     "OrchestratorEnvironmentStack": "${OrchestratorEnvironmentStack}",
                     "GlobalStack": "${GlobalStack}",
                     "Environment": "${Environment}",
-                    "GitBranch": "${GitBranch}"
+                    "GitBranch": "${GitBranch}",
+                    "GithubOauthToken": "${GithubOauthToken}"
                   }
               RunOrder: 1
 

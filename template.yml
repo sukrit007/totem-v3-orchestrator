@@ -28,6 +28,10 @@ Parameters:
     MinLength: 1
     Default: feature_git-workflow
 
+  GithubOauthToken:
+    Type: String
+    Description: Github Oauth token to configure hooks and pipeline with source github
+    MinLength: 1
 
 Resources:
   ApiGateway:
@@ -166,7 +170,8 @@ Resources:
       Handler: index.handler
       Runtime: nodejs6.10
       Environment:
-        Variables: {}
+        Variables:
+          GITHUB_TOKEN: !Ref GithubOauthToken
       Role:
         Fn::ImportValue: !Sub "${OrchestratorEnvironmentStack}-OrchestratorLambdaRoleArn"
       Events:
