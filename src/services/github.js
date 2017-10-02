@@ -17,16 +17,23 @@ class GithubService {
   /**
    * Initialize GithubService
    * @param {GitHub} githubApi - GitHub API Instance
-   * @param {GitHub} [hookDef] - Hook definition
+   * @param {GitHub} [hookDef] - Default parameters for hook definition
    */
   constructor(githubApi, hookDef) {
     this.githubApi = githubApi;
     this.hookDef = _.merge({}, config.github.hookDef, hookDef);
   }
 
+  /**
+   * Service that sets up totem-v3 orchestrator webhook for given github repository
+   * @param {String} owner - Github owner name
+   * @param {String} repo - Github repository name
+   * @param {String} apiUrl - Base API URl for configuring webhook
+   * @return {Promise.<TResult>}
+   */
   setupWebhook(owner, repo, apiUrl) {
     let hubRepo = this.githubApi.getRepo(owner, repo);
-    let hookUrl =  `${apiUrl}/hooks/github`;
+    let hookUrl = `${apiUrl}/hooks/github`;
     logger.info(`Configuring webhook for ${owner}/${repo} using apiUrl:${apiUrl}`);
     return hubRepo.listHooks()
       .then(resp => {
@@ -41,11 +48,9 @@ class GithubService {
             url: hookUrl
           }
         });
-        if(hook) {
-          logger.info(`Updating existing webhook for ${owner}/${repo} with id: ${hook.id}`);
+        if (hook) {
           return hubRepo.updateHook(hook.id, newHook);
         } else {
-          logger.info(`Creating new webhook for ${owner}/${repo}`);
           return hubRepo.createHook(newHook);
         }
       })
@@ -56,15 +61,14 @@ class GithubService {
         };
       })
       .catch(err => {
-        if(err.response) {
-          if(err.response.status === HttpStatus.NOT_FOUND) {
+        if (err.response) {
+          if (err.response.status === HttpStatus.NOT_FOUND) {
             throw new error.GitRepoNotFound(owner, repo);
           }
         }
         throw err;
       });
   }
-
 }
 
 bottle.service('github', GithubService, 'githubApi');
