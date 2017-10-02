@@ -30,6 +30,7 @@ Parameters:
 
   GithubOauthToken:
     Type: String
+    NoEcho: true
     Description: Github Oauth token to configure hooks and pipeline with source github
     MinLength: 1
 
