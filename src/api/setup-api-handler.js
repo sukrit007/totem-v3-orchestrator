@@ -23,16 +23,13 @@ class SetupApiHandler {
     let body = event.body && JSON.parse(event.body) || {};
     let apiId = event.requestContext.apiId || 'local',
       stage = event.requestContext.stage || 'prod',
-      apiUrl = body.apiUrl || `https://${apiId}.execute-api.${this.awsConfig.region}.amazonaws.com/${stage}`,
-      hookUrl = `${apiUrl}/hooks/github`;
+      apiUrl = body.apiUrl || `https://${apiId}.execute-api.${this.awsConfig.region}.amazonaws.com/${stage}`;
 
-    return this.githubService.setupWebhook(body.owner, body.repo)
-      .then(() => {
-        callback(null, {
+    return this.githubService.setupWebhook(body.owner, body.repo, apiUrl)
+      .then( output => {
+        return callback(null, {
           statusCode: HttpStatus.OK,
-          body: JSON.stringify({
-            hookUrl
-          })
+          body: JSON.stringify(output)
         });
       })
       .catch(err => apiError.handleError(err, callback));

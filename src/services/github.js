@@ -16,14 +16,40 @@ class GithubService {
   /**
    * Initialize GithubService
    * @param {GitHub} githubApi - GitHub API Instance
+   * @param {GitHub} [hookDef] - Hook definition
    */
-  constructor(githubApi) {
+  constructor(githubApi, hookDef) {
     this.githubApi = githubApi;
+    this.hookDef = _.merge({}, config.github.hookDef, hookDef);
   }
 
-  setupWebhook(owner, repo) {
-    return this.githubApi.getRepo(owner, repo)
-      .listHooks()
+  setupWebhook(owner, repo, apiUrl) {
+    let repo = this.githubApi.getRepo(owner, repo);
+    let hookUrl =  `${apiUrl}/hooks/github`;
+    return repo.listHooks()
+      .then(hooks => {
+        return _.find(hooks, hook => {
+          return hook.config && hook.config.url && hook.config.url.toLowerCase().startsWith(apiUrl);
+        })
+      })
+      .then(hook => {
+        let newHook = _.merge({}, this.hookDef, {
+          config: {
+            url: hookUrl
+          }
+        });
+        if(hook) {
+          return repo.updateHook(hook.id, newHook);
+        } else {
+          return repo.createHook(newHook);
+        }
+      })
+      .then(resp => {
+        return {
+          location: resp.data.url,
+          hookUrl: hookUrl
+        };
+      })
       .catch(err => {
         if(err.response) {
           if(err.response.status === HttpStatus.NOT_FOUND) {
@@ -33,16 +59,6 @@ class GithubService {
         throw err;
       });
   }
-
-  /**
-   * Lists all hooks for given owner and repository
-   * @param owner
-   * @param repo
-   */
-  listWebhooks(owner, repo) {
-
-  }
-
 
 }
 
