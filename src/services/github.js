@@ -39,9 +39,9 @@ class GithubService {
           }
         });
         if(hook) {
-          return repo.updateHook(hook.id, newHook);
+          return hubRepo.updateHook(hook.id, newHook);
         } else {
-          return repo.createHook(newHook);
+          return hubRepo.createHook(newHook);
         }
       })
       .then(resp => {
