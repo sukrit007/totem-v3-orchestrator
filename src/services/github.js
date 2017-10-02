@@ -3,6 +3,7 @@
 const
   config = require('config'),
   constants = require('../common/constants'),
+  logger = require('../common/logger'),
   bottle = constants.BOTTLE_CONTAINER,
   HttpStatus = require('http-status-codes'),
   error = require('./error'),
@@ -26,8 +27,10 @@ class GithubService {
   setupWebhook(owner, repo, apiUrl) {
     let hubRepo = this.githubApi.getRepo(owner, repo);
     let hookUrl =  `${apiUrl}/hooks/github`;
+    logger.info(`Configuring webhook for ${owner}/${repo} using apiUrl:${apiUrl}`);
     return hubRepo.listHooks()
       .then(hooks => {
+
         return _.find(hooks, hook => {
           return hook.config && hook.config.url && hook.config.url.toLowerCase().startsWith(apiUrl);
         });
