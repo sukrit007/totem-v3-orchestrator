@@ -69,8 +69,8 @@ describe('GithubService', () => {
             name: 'web',
             type: 'Repository',
             config: {
-              content_type: 'application/json',
-              insecure_ssl: 0,
+              'content_type': 'application/json',
+              'insecure_ssl': 0,
               url: `${MOCK_API_URL}/hooks/github`,
               secret: MOCK_HOOK_SECRET
             },
@@ -113,8 +113,8 @@ describe('GithubService', () => {
             name: 'web',
             type: 'Repository',
             config: {
-              content_type: 'application/json',
-              insecure_ssl: 0,
+              'content_type': 'application/json',
+              'insecure_ssl': 0,
               url: `${MOCK_API_URL}/hooks/github`,
               secret: MOCK_HOOK_SECRET
             },
@@ -134,7 +134,7 @@ describe('GithubService', () => {
       githubApi.getRepo.returns(hubRepo);
       // Test
       return service.setupWebhook(MOCK_OWNER, MOCK_REPO, MOCK_API_URL)
-        .should.eventually.be.rejected;
+        .should.eventually.be.rejectedWith(error.GitRepoNotFound);
     });
 
   });
