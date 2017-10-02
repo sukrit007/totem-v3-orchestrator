@@ -58,6 +58,11 @@ Parameters:
     MinLength: 1
     Default: 'totem'
 
+  WebhookSecret:
+    Type: String
+    NoEcho: true
+    Description: Webhook secret to be used for configuring webhooks
+    MinLength: 1
 
 
 Resources:
@@ -164,7 +169,8 @@ Resources:
                     "GlobalStack": "${GlobalStack}",
                     "Environment": "${Environment}",
                     "GitBranch": "${GitBranch}",
-                    "GithubOauthToken": "${GithubOauthToken}"
+                    "GithubOauthToken": "${GithubOauthToken}",
+                    "WebhookSecret": "${WebhookSecret}"
                   }
               RunOrder: 1
 

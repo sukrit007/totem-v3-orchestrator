@@ -34,6 +34,12 @@ Parameters:
     Description: Github Oauth token to configure hooks and pipeline with source github
     MinLength: 1
 
+  WebhookSecret:
+    Type: String
+    NoEcho: true
+    Description: Webhook secret to be used for configuring webhooks
+    MinLength: 1
+
 Resources:
   ApiGateway:
     Type: AWS::Serverless::Api
@@ -173,6 +179,7 @@ Resources:
       Environment:
         Variables:
           GITHUB_TOKEN: !Ref GithubOauthToken
+          WEBHOOK_SECRET: !Ref WebhookSecret
       Role:
         Fn::ImportValue: !Sub "${OrchestratorEnvironmentStack}-OrchestratorLambdaRoleArn"
       Events:

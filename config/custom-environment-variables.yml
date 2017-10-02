@@ -3,6 +3,6 @@ github:
   token: GITHUB_TOKEN
   hookDef:
     config:
-      token: GITHUB_TOKEN
+      secret: WEBHOOK_SECRET
 aws:
   region: AWS_REGION
