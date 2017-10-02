@@ -42,8 +42,10 @@ class GithubService {
           }
         });
         if(hook) {
+          logger.info(`Updating existing webhook for ${owner}/${repo} with id: ${hook.id}`);
           return hubRepo.updateHook(hook.id, newHook);
         } else {
+          logger.info(`Creating new webhook for ${owner}/${repo}`);
           return hubRepo.createHook(newHook);
         }
       })
