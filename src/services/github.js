@@ -29,8 +29,8 @@ class GithubService {
     let hookUrl =  `${apiUrl}/hooks/github`;
     logger.info(`Configuring webhook for ${owner}/${repo} using apiUrl:${apiUrl}`);
     return hubRepo.listHooks()
-      .then(hooks => {
-
+      .then(resp => {
+        let hooks = resp.data;
         return _.find(hooks, hook => {
           return hook.config && hook.config.url && hook.config.url.toLowerCase().startsWith(apiUrl);
         });
