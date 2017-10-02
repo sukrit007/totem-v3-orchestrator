@@ -24,13 +24,13 @@ class GithubService {
   }
 
   setupWebhook(owner, repo, apiUrl) {
-    let repo = this.githubApi.getRepo(owner, repo);
+    let hubRepo = this.githubApi.getRepo(owner, repo);
     let hookUrl =  `${apiUrl}/hooks/github`;
-    return repo.listHooks()
+    return hubRepo.listHooks()
       .then(hooks => {
         return _.find(hooks, hook => {
           return hook.config && hook.config.url && hook.config.url.toLowerCase().startsWith(apiUrl);
-        })
+        });
       })
       .then(hook => {
         let newHook = _.merge({}, this.hookDef, {
