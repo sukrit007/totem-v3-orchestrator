@@ -16,14 +16,14 @@ const paths = {
   tests: {
     unit: ['./test/unit/**/*-spec.js'],
     integration: ['./test/integration/**/*-spec.js'],
-    api: ['./test/api/**/*-spec.js']
+    functional: ['./test/functional/**/*-spec.js']
   },
   source: ['index.js', './src/**/*.js']
 };
 
 const ISTANBUL_OPTS = {
   print: 'both',
-  'include-all-sources': true
+  'include-all-sources': false
 };
 
 let skipTests = gulpOptions.get('skip-tests') || '@skip';
@@ -37,7 +37,7 @@ gulp.task('lint', () => {
 });
 
 gulp.task('coverage', () => {
-  return gulp.src(paths.tests.unit.concat(paths.tests.integration).concat(paths.tests.api))
+  return gulp.src(paths.tests.unit.concat(paths.tests.integration).concat(paths.source))
     .pipe(spawnMocha({
       timeout: TEST_TIMEOUT,
       istanbul: ISTANBUL_OPTS,
@@ -53,7 +53,7 @@ gulp.task('coveralls', ['coverage'], () => {
 });
 
 gulp.task('test:unit', () => {
-  return gulp.src(paths.tests.unit, { read: false })
+  return gulp.src(paths.tests.unit.concat(paths.source), { read: false })
     .pipe(spawnMocha({
       istanbul: ISTANBUL_OPTS,
       grep: skipTests,
@@ -63,7 +63,7 @@ gulp.task('test:unit', () => {
 });
 
 gulp.task('test:integration', () => {
-  return gulp.src(paths.tests.integration, { read: false })
+  return gulp.src(paths.tests.integration.concat(paths.source), { read: false })
     .pipe(spawnMocha({
       timeout: TEST_TIMEOUT,
       istanbul: ISTANBUL_OPTS,
@@ -73,12 +73,11 @@ gulp.task('test:integration', () => {
     .on('error', gutil.log);
 });
 
-gulp.task('test:api', () => {
-  return gulp.src(paths.tests.api, { read: false })
+gulp.task('test:functional', () => {
+  return gulp.src(paths.tests.functional, { read: false })
     .pipe(spawnMocha({
       timeout: TEST_TIMEOUT,
-      istanbul: ISTANBUL_OPTS,
-      grep: skipTests,
+      istanbul: false,
       invert: true
     }))
     .on('error', gutil.log);
