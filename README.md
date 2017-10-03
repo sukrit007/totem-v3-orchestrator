@@ -1,4 +1,4 @@
-# totem-v3-orchestrator [![Coverage Status](https://coveralls.io/repos/github/totem/totem-v3-orchestrator/badge.svg?branch=feature_git-workflow)](https://coveralls.io/github/totem/totem-v3-orchestrator?branch=feature_git-workflow)[![Build Status](https://travis-ci.org/totem/totem-v3-orchestrator.svg?branch=feature_git-workflow)](https://travis-ci.org/totem/totem-v3-orchestrator)
+# totem-v3-orchestrator [![Coverage Status](https://coveralls.io/repos/github/totem/totem-v3-orchestrator/badge.svg?branch=feature_git-workflow)](https://coveralls.io/github/totem/totem-v3-orchestrator?branch=feature_git-workflow) [![Build Status](https://travis-ci.org/totem/totem-v3-orchestrator.svg?branch=feature_git-workflow)](https://travis-ci.org/totem/totem-v3-orchestrator)
 Manages the lifecycle for building, deploying  and decommissioning projects on totem-v3
 
 ## Documentation
@@ -47,7 +47,7 @@ sam local start-api
  
 ## Test
 
-To run all tests (unit + integration + api), use command:
+To run all tests (unit + integration), use command:
 
 ```
 gulp test
@@ -67,11 +67,11 @@ To run just integration tests, use command:
 gulp test:integration
 ```
 
-### API Tests
-To run just unit tests, use command:
+### Functional Tests
+To run functional tests, use command:
 
 ```
-gulp test:api
+gulp test:functional
 ```
  
 ## Deploy
