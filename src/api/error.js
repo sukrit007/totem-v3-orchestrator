@@ -1,14 +1,17 @@
 'use strict';
 
-const
-  HttpStatus = require('http-status-codes'),
-  error = require('../services/error');
-
 module.exports = {
+
+  /**
+   * Error handler for API Errors
+   * @param err
+   * @param callback
+   * @return {*}
+   */
   handleError: (err, callback) => {
     if (err.statusCode) {
       return callback(null, {
-        statusCode: err.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
+        statusCode: err.statusCode,
         body: JSON.stringify(err)
       });
     }
