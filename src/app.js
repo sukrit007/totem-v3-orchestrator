@@ -8,6 +8,7 @@ const
   constants = require('./common/constants'),
   bottle = constants.BOTTLE_CONTAINER,
   HttpStatus = require('http-status-codes'),
+  error = require('./services/error'),
   glob = require('glob'),
   config = require('config'),
   GitHub = require('github-api'),
@@ -46,6 +47,6 @@ module.exports.createHandler = () => {
     // All other service events
 
     // Finally, throw error if no event handler found
-    callback(new Error('No event handler registered for the given event type'));
+    callback(new error.EventHandlerNotRegistered());
   };
 };

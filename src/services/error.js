@@ -41,9 +41,16 @@ class GitRepoNotFound extends BusinessRuleViolation {
   }
 }
 
+class EventHandlerNotRegistered extends ServiceError {
+  constructor() {
+    super('No event handler registered for the given event type', null);
+  }
+}
+
 module.exports = {
   BaseError,
   ServiceError,
   BusinessRuleViolation,
-  GitRepoNotFound
+  GitRepoNotFound,
+  EventHandlerNotRegistered
 };

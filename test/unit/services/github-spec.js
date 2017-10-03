@@ -137,6 +137,15 @@ describe('GithubService', () => {
         .should.eventually.be.rejectedWith(error.GitRepoNotFound);
     });
 
+    it('should rethrow unhandled errors', () => {
+      let err = new Error();
+      hubRepo.listHooks.returns(Promise.reject(err));
+      githubApi.getRepo.returns(hubRepo);
+      // Test
+      return service.setupWebhook(MOCK_OWNER, MOCK_REPO, MOCK_API_URL)
+        .should.eventually.be.rejectedWith(err);
+    });
+
   });
 
 });
