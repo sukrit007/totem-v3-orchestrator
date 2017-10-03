@@ -16,21 +16,27 @@ describe('Root API', () => {
         if(err) {
           return done(err);
         }
-        response.statusCode.should.equals(HttpStatus.OK);
-        let body = JSON.parse(response.body);
-        body.should.deep.equals({
-          name: pkg.name,
-          version: pkg.version,
-          triage: {
-            event,
-            context
-          }
-        });
+        try {
+          response.statusCode.should.equals(HttpStatus.OK);
+          let body = JSON.parse(response.body);
+          body.should.deep.equals({
+            name: pkg.name,
+            version: pkg.version,
+            triage: {
+              event,
+              context
+            }
+          });
+        } catch (assertErr) {
+          return done(assertErr);
+        }
+
         return done();
       };
 
       let event = {
-        path: '/'
+        path: '/',
+        httpMethod: 'GET'
       };
 
       let context = {};
