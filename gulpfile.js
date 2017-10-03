@@ -89,5 +89,5 @@ gulp.task('test:unit-watch', () => {
 });
 
 gulp.task('test', ['coverage']);
-gulp.task('travis', ['lint', 'test']);
+gulp.task('travis', ['lint', 'coveralls']);
 gulp.task('default', ['lint', 'test']);
