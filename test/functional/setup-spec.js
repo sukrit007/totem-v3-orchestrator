@@ -21,7 +21,7 @@ describe('Repository Setup', () => {
   before(() => {
     should.exist(config.tests, 'Tests config not found');
     should.exist(config.tests.functional, 'Functional Tests config not found');
-    should.exist(config.tests.functional.orchestratorApiId, 'Orchestrator URL not found in functional tests config');
+    should.exist(config.tests.functional.orchestratorApiId, 'Orchestrator Api Id not configured');
     should.exist(config.tests.functional.github, 'Github config not found');
     should.exist(config.tests.functional.github.testRepo, 'Test repository not defined');
     should.exist(config.tests.functional.github.testOwner, 'Test owner not defined');
