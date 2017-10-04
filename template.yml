@@ -108,21 +108,6 @@ Resources:
                 type: aws_proxy
 
           /owners/{owner}/repos/{repo}/setup:
-            parameters:
-              - name: owner
-                in: path
-                description: Github owner (e.g. totem)
-                required: true
-                type: string
-                minLength: 1
-                maxLength: 255
-              - name: repo
-                in: path
-                description: Github repository (e.g. totem-demo)
-                required: true
-                type: string
-                minLength: 1
-                maxLength: 255
             put:
               summary: Create or update repository webhooks for totem-v3
               description: Create or update repository webhooks for totem-v3
@@ -138,6 +123,20 @@ Resources:
                   required: true
                   schema:
                     $ref: '#/definitions/SetupParameters'
+                - name: owner
+                  in: path
+                  description: Github owner (e.g. totem)
+                  required: true
+                  type: string
+                  minLength: 1
+                  maxLength: 255
+                - name: repo
+                  in: path
+                  description: Github repository (e.g. totem-demo)
+                  required: true
+                  type: string
+                  minLength: 1
+                  maxLength: 255
               produces:
                 - application/json
               responses:
