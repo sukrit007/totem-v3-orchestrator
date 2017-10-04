@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/totem/totem-v3-orchestrator#readme",
   "dependencies": {
+    "aws-sdk": "^2.126.0",
     "axios": "^0.16.2",
     "bottlejs": "^1.6.1",
     "config": "^1.26.2",
@@ -34,9 +35,11 @@
     "lodash": "^4.17.4"
   },
   "devDependencies": {
+    "aws4": "^1.6.0",
     "chai": "^3.5.0",
     "chai-as-promised": "^7.1.1",
     "chai-properties": "^1.2.1",
+    "crypto-js": "^3.1.9-1",
     "gulp": "^3.9.1",
     "gulp-coveralls": "^0.1.4",
     "gulp-exclude-gitignore": "^1.1.1",

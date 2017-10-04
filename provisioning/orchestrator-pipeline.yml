@@ -180,7 +180,8 @@ Resources:
                 Owner: "AWS"
                 Provider: "CloudFormation"
                 Version: 1
-              OutputArtifacts: []
+              OutputArtifacts:
+                - Name: deploy
               Configuration:
                 ActionMode: CHANGE_SET_EXECUTE
                 StackName: !Sub "totem-orchestrator-${Environment}"

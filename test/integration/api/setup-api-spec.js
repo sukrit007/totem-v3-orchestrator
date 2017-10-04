@@ -34,7 +34,8 @@ describe('Setup API', () => {
           let body = JSON.parse(response.body);
           body.should.deep.equals({
             location: HOOK_LOCATION,
-            hookUrl: `${API_BASE}/hooks/github`
+            hookUrl: `${API_BASE}/hooks/github`,
+            hookId: 1
           });
         } catch (assertErr) {
           return done(assertErr);
@@ -62,7 +63,6 @@ describe('Setup API', () => {
 
     });
 
-
     it('should update existing setup for totem v3', done => {
 
       githubFixture.nockListHooksWithExistingHook(API_BASE);
@@ -77,7 +77,8 @@ describe('Setup API', () => {
           let body = JSON.parse(response.body);
           body.should.deep.equals({
             location: HOOK_LOCATION,
-            hookUrl: `${API_BASE}/hooks/github`
+            hookUrl: `${API_BASE}/hooks/github`,
+            hookId: 1
           });
         } catch (assertErr) {
           return done(assertErr);

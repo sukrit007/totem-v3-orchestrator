@@ -16,3 +16,7 @@ github:
       insecure_ssl: 0
       # secret: "Should be injected from env variable"
       # url: "Will automatically be injected from the orchestrator setup code"
+
+tests:
+  functional:
+    github: {}

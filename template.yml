@@ -190,9 +190,13 @@ Resources:
                 type: string
                 description: Configured hook url
                 minLength: 1
+              hookId:
+                type: number
+                description: Id of the configured hook
             required:
               - location
               - hookUrl
+              - hookId
             additionalProperties: false
 
   OrchestratorLambda:

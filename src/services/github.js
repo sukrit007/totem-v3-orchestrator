@@ -57,6 +57,7 @@ class GithubService {
       .then(resp => {
         return {
           location: resp.data.url,
+          hookId: resp.data.id,
           hookUrl: hookUrl
         };
       })

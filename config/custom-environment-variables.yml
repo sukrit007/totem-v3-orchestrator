@@ -6,3 +6,12 @@ github:
       secret: WEBHOOK_SECRET
 aws:
   region: AWS_REGION
+
+tests:
+  functional:
+    orchestratorApiId: ORCHESTRATOR_API_ID
+    github:
+      testOwner: TEST_OWNER
+      testRepo: TEST_REPO
+      token: GITHUB_TOKEN
+      testBranch: TEST_BRANCH

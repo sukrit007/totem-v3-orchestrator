@@ -49,7 +49,8 @@ describe('GithubService', () => {
       }));
       hubRepo.createHook.returns(Promise.resolve({
         data: {
-          url: MOCK_GITHUB_HOOK_URL
+          url: MOCK_GITHUB_HOOK_URL,
+          id: MOCK_HOOK_ID
         }
       }));
       githubApi.getRepo.returns(hubRepo);
@@ -60,7 +61,8 @@ describe('GithubService', () => {
           // Assertions
           output.should.deep.equals({
             location: MOCK_GITHUB_HOOK_URL,
-            hookUrl: `${MOCK_API_URL}/hooks/github`
+            hookUrl: `${MOCK_API_URL}/hooks/github`,
+            hookId: MOCK_HOOK_ID
           });
 
           hubRepo.listHooks.should.have.been.calledWithExactly();
@@ -94,7 +96,8 @@ describe('GithubService', () => {
       }));
       hubRepo.updateHook.returns(Promise.resolve({
         data: {
-          url: MOCK_GITHUB_HOOK_URL
+          url: MOCK_GITHUB_HOOK_URL,
+          id: MOCK_HOOK_ID
         }
       }));
       githubApi.getRepo.returns(hubRepo);
@@ -105,7 +108,8 @@ describe('GithubService', () => {
           // Assertions
           output.should.deep.equals({
             location: MOCK_GITHUB_HOOK_URL,
-            hookUrl: `${MOCK_API_URL}/hooks/github`
+            hookUrl: `${MOCK_API_URL}/hooks/github`,
+            hookId: MOCK_HOOK_ID
           });
 
           hubRepo.updateHook.should.have.been.calledWithExactly(MOCK_HOOK_ID, {
