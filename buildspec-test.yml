@@ -1,0 +1,16 @@
+# AWS CodeBuild Build Specification for Building and packaging Orchestrator
+version: 0.1
+phases:
+  install:
+    commands:
+      - npm install -g gulp-cli
+      - npm install
+
+  build:
+    commands:
+      - set -o pipefail
+      - export ORCHESTRATOR_API_ID=$(aws --region=$AWS_REGION cloudformation describe-stack-resource
+          --logical-resource-id=ApiGateway
+          --stack-name=$ORCHESTRATOR_STACK
+          --output text | tail -1 | awk '{print $1}')
+      - gulp test:functional
