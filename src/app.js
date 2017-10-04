@@ -7,7 +7,7 @@ const
   logger = require('./common/logger'),
   constants = require('./common/constants'),
   bottle = constants.BOTTLE_CONTAINER,
-  HttpStatus = require('http-status-codes'),
+  apiRouter = require('./api/api-router'),
   error = require('./services/error'),
   glob = require('glob'),
   config = require('config'),
@@ -32,16 +32,7 @@ module.exports.createHandler = () => {
 
     // API Gateway Events
     if(event.path) {
-      let apiHandler = bottle.container[`api-${event.path}`];
-      if(!apiHandler) {
-        return callback(null, {
-          statusCode: HttpStatus.NOT_FOUND,
-          body: JSON.stringify({
-            message: `Resource with path: ${event.path} is not found`
-          })
-        });
-      }
-      return apiHandler.handle(event, context, callback);
+      return apiRouter.handler(event, context, callback);
     }
 
     // All other service events

@@ -21,6 +21,10 @@ class SetupApiHandler {
   handle(event, context, callback) {
 
     let body = event.body && JSON.parse(event.body) || {};
+    body = _.merge({}, body, {
+      repo: event.pathParameters.repo,
+      owner: event.pathParameters.owner
+    });
     let apiId = event.requestContext.apiId || 'local',
       stage = event.requestContext.stage || 'prod',
       apiUrl = body.apiUrl || `https://${apiId}.execute-api.${this.awsConfig.region}.amazonaws.com/${stage}`;
@@ -37,6 +41,6 @@ class SetupApiHandler {
   }
 }
 
-bottle.service('api-/setup', SetupApiHandler, 'github');
+bottle.service('api-setup', SetupApiHandler, 'github');
 
 module.exports = SetupApiHandler;

@@ -18,7 +18,7 @@ describe('Setup API', () => {
     nock.cleanAll();
   });
 
-  describe('POST /setup', () => {
+  describe('POST /owners/{owner}/repos/{repo}/setup', () => {
 
     it('should setup github repository with totem v3', done => {
 
@@ -43,16 +43,17 @@ describe('Setup API', () => {
       };
 
       let event = {
-        path: '/setup',
+        path: `/owners/${githubFixture.DATA.TEST_OWNER}/repos/${githubFixture.DATA.TEST_REPO}/setup`,
         httpMethod: 'PUT',
         requestContext: {
           apiId: 'test-integration',
           stage: 'prod'
         },
-        body: JSON.stringify({
+        body: '{}',
+        pathParameters: {
           owner: githubFixture.DATA.TEST_OWNER,
           repo: githubFixture.DATA.TEST_REPO
-        })
+        }
       };
 
       let context = {};
@@ -85,16 +86,17 @@ describe('Setup API', () => {
       };
 
       let event = {
-        path: '/setup',
+        path: `/owners/${githubFixture.DATA.TEST_OWNER}/repos/${githubFixture.DATA.TEST_REPO}/setup`,
         httpMethod: 'PUT',
         requestContext: {
           apiId: 'test-integration',
           stage: 'prod'
         },
-        body: JSON.stringify({
+        body: '{}',
+        pathParameters: {
           owner: githubFixture.DATA.TEST_OWNER,
           repo: githubFixture.DATA.TEST_REPO
-        })
+        }
       };
 
       let context = {};

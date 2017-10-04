@@ -76,7 +76,7 @@ Resources:
               x-amazon-apigateway-integration:
                 responses:
                   default:
-                    statusCode: 202
+                    statusCode: 200
                 uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${OrchestratorLambda.Arn}/invocations"
                 passthroughBehavior: when_no_match
                 httpMethod: POST
@@ -88,7 +88,7 @@ Resources:
               summary: Handles github webhook
               description: Handles github webhook
               operationId: handleGithubWebhook
-              x-amazon-apigateway-request-validator : all
+              x-amazon-apigateway-request-validator: basic
               consumes:
                 - application/json
               produces:
@@ -107,7 +107,18 @@ Resources:
                 httpMethod: POST
                 type: aws_proxy
 
-          /setup:
+          /owners/{owner}/repos/{repo}/setup:
+            parameters:
+              - name: owner
+                in: path
+                description: Github owner (e.g. totem)
+                required: true
+                type: string
+              - name: repo
+                in: path
+                description: Github repository (e.g. totem-demo)
+                required: true
+                type: string
             put:
               summary: Create or update repository webhooks for totem-v3
               description: Create or update repository webhooks for totem-v3
@@ -126,10 +137,10 @@ Resources:
               produces:
                 - application/json
               responses:
-                "202":
-                  description: 202 Accepted Response
+                "200":
+                  description: Success Response
                   schema:
-                    $ref: "#/definitions/Empty"
+                    $ref: "#/definitions/SetupResponse"
 
               x-amazon-apigateway-auth:
                 type: aws_iam
@@ -152,12 +163,6 @@ Resources:
             type: object
             title: Setup Parameters
             properties:
-              owner:
-                type: string
-                description: Git Owner
-              repo:
-                type: string
-                description: Git Repository
               apiUrl:
                 type: string
                 description: Base API URL for setup
@@ -166,9 +171,21 @@ Resources:
                 default: 'github'
                 enum:
                   - github
+            additionalProperties: false
+
+          SetupResponse:
+            type: object
+            title: Setup Response
+            properties:
+              location:
+                type: string
+                description: Github webhook location
+              hookUrl:
+                type: string
+                description: Configured hook url
             required:
-              - owner
-              - repo
+              - location
+              - hookUrl
             additionalProperties: false
 
   OrchestratorLambda:
@@ -198,7 +215,7 @@ Resources:
         SetupApi:
           Type: Api
           Properties:
-            Path: '/setup'
+            Path: '/owners/{owner}/repos/{repo}/setup'
             Method: put
             RestApiId: !Ref ApiGateway
 
