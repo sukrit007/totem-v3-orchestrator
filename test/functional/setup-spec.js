@@ -16,7 +16,7 @@ const TEST_TIMEOUT = 10000;
 
 
 describe('Repository Setup', () => {
-  let orchestratorApiId, testRepo, testOwner, testBranch, githubToken, awsCreds, awsRegion;
+  let orchestratorApiId, testRepo, testOwner, testBranch, githubToken, awsCreds, awsRegion, githubApi;
 
   before(() => {
     should.exist(config.tests, 'Tests config not found');
@@ -36,7 +36,7 @@ describe('Repository Setup', () => {
     testBranch = config.tests.functional.github.testBranch;
     githubToken = config.tests.functional.github.token;
     awsRegion = config.aws.region;
-    let githubApi = new GitHub({
+    githubApi = new GitHub({
       token: githubToken
     });
 
@@ -54,7 +54,7 @@ describe('Repository Setup', () => {
       host: `${orchestratorApiId}.execute-api.${awsRegion}.amazonaws.com`,
       region: awsRegion,
       service: 'execute-api',
-      method: 'GET',
+      method: 'PUT',
       path: `/prod/owners/${testOwner}/repos/${testRepo}/setup`,
       body: JSON.stringify({})
     }, awsCreds);
@@ -68,12 +68,20 @@ describe('Repository Setup', () => {
       .expect(res => {
         should.exist(res.body);
         should.exist(res.body.location);
+        should.exist(res.body.hookId);
+        should.exist(res.body.hookUrl);
       })
       .end((err, res) => {
         console.info('Setup API Response: ',res.body);
         if(err) {
           return done(err);
         }
+
+        // Invoke Github API to verify the callback hook was indeed created
+        let hubRepo = githubApi.getRepo(testOwner, testRepo);
+        return hubRepo.getHook(res.body.hookId)
+          .then(() => done())
+          .catch(done);
       });
   }).timeout(TEST_TIMEOUT);
 
