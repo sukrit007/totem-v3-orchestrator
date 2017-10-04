@@ -240,9 +240,6 @@ Outputs:
         - '.execute-api.'
         - !Ref 'AWS::Region'
         - .amazonaws.com/prod
-  ApiId:
-    Description: API Id for the orchestrator gateway
-    Value: !Ref ApiGateway
 
   ApiGateway:
     Description: ApiGateway API ID
