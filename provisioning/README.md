@@ -53,6 +53,8 @@ To create a new orchestrator pipeline execute following command:
 ```bash
 set -o pipefail
 PROFILE=[AWS_CLI_PROFILE]
+GITHUB_OAUTH_TOKEN=[GITHUB_OAUTH_TOKEN]
+WEBHOOK_SECRET=[WEBHOOK_SECRET]
 TOTEM_BUCKET="$(aws --profile=$PROFILE cloudformation describe-stack-resource \
   --logical-resource-id=TotemBucket \
   --stack-name=totem-global \
@@ -66,7 +68,8 @@ aws --profile=$PROFILE cloudformation create-stack \
   --template-url=https://s3.amazonaws.com/$OUTPUT_TEMPLATE \
   --stack-name=totem-orchestrator-pipeline-development \
   --parameters \
-    "ParameterKey=GithubOauthToken,ParameterValue=[github-oauth-token]" \
+    "ParameterKey=GithubOauthToken,ParameterValue=${GITHUB_OAUTH_TOKEN}" \
+    "ParameterKey=WebhookSecret,ParameterValue=${WEBHOOK_SECRET}" \
   --tags \
     "Key=app,Value=totem-v3-orchestrator" \
     "Key=env,Value=development" \
@@ -74,7 +77,8 @@ aws --profile=$PROFILE cloudformation create-stack \
     "Key=stacktype,Value=totem-orchestrator-pipeline"
 ```
 where:
-- **github-oauth-token**: Personal oauth token to access github repositories.
+- **GITHUB_OAUTH_TOKEN**: Personal oauth token to access github repositories and for configuring webhooks.
+- **WEBHOOK_SECRET**: Secret used for configuring totem-v3 github webhooks
 - **AWS_CLI_PROFILE**: [AWS CLI Profile](http://docs.aws.amazon.com/cli/latest/userguide/cli-multiple-profiles.html)
 
 To monitor the status of the stack creation, use command:
