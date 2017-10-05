@@ -1,12 +1,58 @@
 # Provisioning
 
+### Environment stack
+
+#### New Environment Stack
+This step assumes that you have already created [global resources stack](./global-resources-stack).
+To spin up new environment stack, execute the following command from [parent folder](..): 
+
+
+```bash
+set -o pipefail
+PROFILE=[AWS_CLI_PROFILE]
+TOTEM_BUCKET="$(aws --profile=$PROFILE cloudformation describe-stack-resource \
+  --logical-resource-id=TotemBucket \
+  --stack-name=totem-global \
+  --output text | tail -1 | awk '{print $1}')" &&
+
+OUTPUT_TEMPLATE="$TOTEM_BUCKET/cloudformation/totem-environment.yml" && 
+
+aws --profile=$PROFILE s3 cp ./modules/totem-v3/provisioning/totem-environment.yml s3://$OUTPUT_TEMPLATE &&
+
+aws --profile=$PROFILE cloudformation create-stack \
+  --template-url=https://s3.amazonaws.com/$OUTPUT_TEMPLATE \
+  --stack-name=totem-environment \
+  --capabilities=CAPABILITY_NAMED_IAM \
+  --tags \
+    "Key=app,Value=totem-v3" \
+    "Key=env,Value=development" \
+    "Key=client,Value=totem" \
+    "Key=stacktype,Value=totem-environment"
+```
+
+where:
+- **AWS_CLI_PROFILE**: [AWS CLI Profile](http://docs.aws.amazon.com/cli/latest/userguide/cli-multiple-profiles.html)
+
+
+To monitor the status of the stack creation, use command:
+
+```bash
+aws --profile=contrail cloudformation describe-stacks \
+  --stack-name=totem-environment  
+```
+
+Note:
+- You must modify tags for appropriate totem cluster
+
 ## Setup Orchestrator Pipeline
 
 ### Create new orchestrator pipeline
 
+To create a new orchestrator pipeline execute following command: 
+
 ```bash
 set -o pipefail
-PROFILE=[aws-cli-profile]
+PROFILE=[AWS_CLI_PROFILE]
 TOTEM_BUCKET="$(aws --profile=$PROFILE cloudformation describe-stack-resource \
   --logical-resource-id=TotemBucket \
   --stack-name=totem-global \
@@ -29,7 +75,7 @@ aws --profile=$PROFILE cloudformation create-stack \
 ```
 where:
 - **github-oauth-token**: Personal oauth token to access github repositories.
-- **aws-cli-profile**: AWS CLI Profile
+- **AWS_CLI_PROFILE**: [AWS CLI Profile](http://docs.aws.amazon.com/cli/latest/userguide/cli-multiple-profiles.html)
 
 To monitor the status of the stack creation, use command:
 

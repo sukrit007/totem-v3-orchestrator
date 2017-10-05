@@ -9,17 +9,6 @@ The core documentation for this project can be found in the current repository. 
 
 See [Totem V3 Architecture](https://github.com/totem/totem-v3/tree/develop/architecture)
 
-### User Guide
-[TODO: Add link to totem v3 user guide]
-
-### Operations Guide
-[TODO: Add link to totem v3 operations guide]
-
-### Provisioning Guide
-[TODO: Add link to totem v3 provisioning guide]
-
-### Developer Guide
-[TODO: Add link to totem v3 developer guide]
  
 ## Setup
  
@@ -47,7 +36,11 @@ sam local start-api
  
 ## Test
 
-To run all tests (unit + integration), use command:
+### Travis
+The unit and integration tests ar run automatically in [travis](https://travis-ci.org/totem/totem-v3-orchestrator). 
+
+
+To run unit and integration tests locally, use command:
 
 ```
 gulp test
@@ -68,11 +61,28 @@ gulp test:integration
 ```
 
 ### Functional Tests
-To run functional tests, use command:
+The functional tests run automatically as part of continuous deployment pipeline for
+orchestrator. These tests expect to run in  full functional environment for totem-v3.
+
+To execute functional tests locally, use command:
 
 ```
-gulp test:functional
+env GITHUB_TOKEN=[GITHUB_TOKEN] \
+  TEST_REPO=[TEST_REPO] \
+  TEST_OWNER=[TEST_OWNER] \
+  TEST_BRANCH=[TEST_BRANCH] \
+  AWS_REGION=[AWS_REGION] \
+  ORCHESTRATOR_API_ID=[ORCHESTRATOR_API_ID] \
+  gulp test:functional
 ```
+
+- **GITHUB_TOKEN**: Github token used for validating totem v3 setup.
+- **TEST_REPO**: Github test repository used to configure with totem-v3 (e.g: totem-demo)
+- **TEST_OWNER**: Github test repository owner (e.g.: totem)
+- **TEST_BRANCH**: Github test repository branch (e.g.: develop)
+- **AWS_REGION**: Aws region where orchestrator is deployed
+- **ORCHESTRATOR_API_ID**: API Gateway ID for the orchestrator
+
  
 ## Deploy
  
