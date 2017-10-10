@@ -132,7 +132,7 @@ Resources:
                       - "*"
               - Effect: Allow
                 Action:
-                  - 'cloudformation:*'
+                  - 'states:*'
                 Resource: '*'
 
   CodePipelineRole:
