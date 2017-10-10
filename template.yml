@@ -230,6 +230,23 @@ Resources:
             Method: put
             RestApiId: !Ref ApiGateway
 
+  GitHooksStateMachine:
+    Type: AWS::StepFunctions::StateMachine
+    Properties:
+      DefinitionString: |-
+        {
+          "StartAt": "GitHookBegin",
+          "States": {
+            "GitHookBegin": {
+               "Type": "Pass",
+               "Result": "Incoming git webhook!",
+               "End": true
+            }
+          }
+        }
+      RoleArn:
+        Fn::ImportValue: !Sub "${OrchestratorEnvironmentStack}-StepFunctionRoleArn"
+
 Outputs:
   ApiUrl:
     Description: URL of your API endpoint
@@ -244,3 +261,7 @@ Outputs:
   ApiGateway:
     Description: ApiGateway API ID
     Value: !Ref ApiGateway
+
+  GitHooksStateMachine:
+    Description: GitHooks State Machine Arn
+    Value: !Ref GitHooksStateMachine
