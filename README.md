@@ -101,3 +101,4 @@ This project uses the [Git Flow](https://confluence.meltdev.com/display/DEV/Git+
 - [AWS SAM Model](https://github.com/awslabs/serverless-application-model)
 - [Lambda Continuous Deploy](http://docs.aws.amazon.com/lambda/latest/dg/automating-deployment.html) 
 - [Codepipeline Cloudformation](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-codepipeline-pipeline.html)
+- [Gateway - Step Functions](http://docs.aws.amazon.com/step-functions/latest/dg/tutorial-api-gateway.html)
