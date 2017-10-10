@@ -218,4 +218,4 @@ Outputs:
   StepFunctionRoleArn:
     Value: !GetAtt StepFunctionRole.Arn
     Export:
-      Name: !Sub ${AWS::StackName}-StepFunctionRole
+      Name: !Sub ${AWS::StackName}-StepFunctionRoleArn
