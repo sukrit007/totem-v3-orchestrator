@@ -132,6 +132,11 @@ Resources:
                       - "*"
               - Effect: Allow
                 Action:
+                  - 'cloudformation:*'
+                Resource: '*'
+
+              - Effect: Allow
+                Action:
                   - 'states:*'
                 Resource: '*'
 
