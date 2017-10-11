@@ -45,6 +45,7 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       StageName: prod
+      # Need to use embedded swagger. Reason: https://github.com/awslabs/serverless-application-model/issues/79
       DefinitionBody:
         swagger: 2.0
         basePath: /
