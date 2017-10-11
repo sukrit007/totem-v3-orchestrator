@@ -98,17 +98,23 @@ Resources:
                   description: Successfully started the workflow
                   schema:
                     $ref: "#/definitions/Empty"
+                "500":
+                  description: Error response
+                  schema:
+                    $ref: "#/definitions/Empty"
               x-amazon-apigateway-integration:
                 responses:
-                  default:
+                  "2\\d{2}":
                     statusCode: 200
+                  default:
+                    statusCode: 500
                 uri: !Sub "arn:aws:apigateway:${AWS::Region}:states:action/StartExecution"
                 requestTemplates:
                   application/json: !Sub |
                     #set($inputRoot = $input.path('$'))
                     {
                       "stateMachineArn": "${GitHooksStateMachine}",
-                      "input": "$input.body"
+                      "input": "$util.escapeJavaScript($input.json('$'))"
                     }
                 passthroughBehavior: never
                 httpMethod: POST
