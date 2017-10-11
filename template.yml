@@ -107,7 +107,8 @@ Resources:
                   application/json: !Sub |
                     #set($inputRoot = $input.path('$'))
                     {
-                      "stateMachineArn": "${GitHooksStateMachine}"
+                      "stateMachineArn": "${GitHooksStateMachine}",
+                      "input": "$input.body"
                     }
                 passthroughBehavior: never
                 httpMethod: POST
