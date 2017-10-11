@@ -103,7 +103,13 @@ Resources:
                   default:
                     statusCode: 200
                 uri: !Sub "arn:aws:apigateway:${AWS::Region}:states:action/StartExecution"
-                passthroughBehavior: when_no_match
+                requestTemplates:
+                  application/json: !Sub |
+                    #set($inputRoot = $input.path('$'))
+                    {
+                      "stateMachineArn": "${GitHooksStateMachine}"
+                    }
+                passthroughBehavior: never
                 httpMethod: POST
                 type: aws
                 credentials:
