@@ -69,8 +69,8 @@ Resources:
               produces:
                 - application/json
               responses:
-                "202":
-                  description: 202 Accepted Response
+                "200":
+                  description: Success
                   schema:
                     $ref: "#/definitions/Empty"
               x-amazon-apigateway-integration:
@@ -94,18 +94,20 @@ Resources:
               produces:
                 - application/json
               responses:
-                "202":
-                  description: 202 Accepted Response
+                "200":
+                  description: Successfully started the workflow
                   schema:
                     $ref: "#/definitions/Empty"
               x-amazon-apigateway-integration:
                 responses:
                   default:
-                    statusCode: 202
-                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${OrchestratorLambda.Arn}/invocations"
+                    statusCode: 200
+                uri: !Ref GitHooksStateMachine
                 passthroughBehavior: when_no_match
                 httpMethod: POST
-                type: aws_proxy
+                type: aws
+                credentials:
+                  Fn::ImportValue: !Sub "${OrchestratorEnvironmentStack}-ApiGatewayRoleArn"
 
           /owners/{owner}/repos/{repo}/setup:
             put:

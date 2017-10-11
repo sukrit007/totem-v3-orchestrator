@@ -198,6 +198,28 @@ Resources:
             Action:
               - 'sts:AssumeRole'
 
+  ApiGatewayRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - apigateway.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Path: /
+      Policies:
+        - PolicyName: ApiGatewayAccess
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'states:*'
+                Resource: '*'
+
+
 Outputs:
   OrchestratorLambdaRoleArn:
     Value: !GetAtt OrchestratorLambdaRole.Arn
@@ -224,3 +246,8 @@ Outputs:
     Value: !GetAtt StepFunctionRole.Arn
     Export:
       Name: !Sub ${AWS::StackName}-StepFunctionRoleArn
+
+  ApiGatewayRoleArn:
+    Value: !GetAtt ApiGatewayRole.Arn
+    Export:
+      Name: !Sub ${AWS::StackName}-ApiGatewayRoleArn
