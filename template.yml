@@ -102,7 +102,7 @@ Resources:
                 responses:
                   default:
                     statusCode: 200
-                uri: !Ref GitHooksStateMachine
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:states:action/StartExecution"
                 passthroughBehavior: when_no_match
                 httpMethod: POST
                 type: aws
@@ -153,7 +153,7 @@ Resources:
               x-amazon-apigateway-integration:
                 responses:
                   default:
-                    statusCode: 202
+                    statusCode: 200
                 uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${OrchestratorLambda.Arn}/invocations"
                 passthroughBehavior: when_no_match
                 httpMethod: POST
