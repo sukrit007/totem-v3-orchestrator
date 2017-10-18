@@ -16,6 +16,7 @@ See [Totem V3 Architecture](https://github.com/totem/totem-v3/tree/develop/archi
 
 - [AWS SAM Local](https://github.com/awslabs/aws-sam-local#windows-linux-osx-with-npm-recommended)
 - [node 6.10](https://nodejs.org)
+- [npm 5.x](https://www.npmjs.com/package/npm5)
 - [gulp-cli](https://www.npmjs.com/package/gulp-cli/tutorial)
  
 ## Build

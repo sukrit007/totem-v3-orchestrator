@@ -9,6 +9,7 @@ env:
     - NODE_ENV=travis
 
 install:
+  - npm install -g npm@5
   - npm install -g gulp-cli
   - npm install || (sleep 10s && npm install)
 script: gulp travis --skip-tests=@external
