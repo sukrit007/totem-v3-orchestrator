@@ -11,7 +11,7 @@ const
   aws4 = require('aws4'),
   should = require('chai').should();
 
-const TEST_TIMEOUT = 10000;
+const TEST_TIMEOUT = 20000;
 
 
 

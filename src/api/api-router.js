@@ -9,9 +9,16 @@ const
   bottle = constants.BOTTLE_CONTAINER;
 
 module.exports.handler = (event, context, callback) => {
+  let apiHandler;
 
-  // Try to lookup directly using path mapping
-  let apiHandler = bottle.container[`api-${event.path}`];
+  // Check for Authorization Request
+  if(event.type === 'REQUEST') {
+    apiHandler = bottle.container['api-webhook-auth'];
+  }
+  else {
+    // Try to lookup directly using path mapping
+    apiHandler = bottle.container[`api-${event.path}`];
+  }
 
   if(!apiHandler) {
     // Try custom registration

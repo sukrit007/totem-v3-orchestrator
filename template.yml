@@ -60,6 +60,17 @@ Resources:
             validateRequestBody: true
             validateRequestParameters: true
         x-amazon-apigateway-request-validator: basic
+        securityDefinitions:
+          webhook-auth:
+            type: apiKey
+            name: X-Hub-Signature
+            in: header
+            x-amazon-apigateway-authtype: custom
+            x-amazon-apigateway-authorizer:
+              authorizerUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${OrchestratorLambda.Arn}/invocations"
+              authorizerResultTtlInSeconds: 300
+              identitySource: "method.request.header.X-Hub-Signature"
+              type: request
         paths:
 
           /:
@@ -90,6 +101,8 @@ Resources:
               description: Handles github webhook
               operationId: handleGithubWebhook
               x-amazon-apigateway-request-validator: basic
+              security:
+                - webhook-auth: []
               consumes:
                 - application/json
               produces:
