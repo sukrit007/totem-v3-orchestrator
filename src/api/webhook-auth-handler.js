@@ -18,7 +18,8 @@ class WebHookAuthHandler {
   }
 
   handle(event, context, callback) {
-    let signature = event.authorizationToken;
+    let headers = event.headers;
+    let signature = headers['x-hub-signature'];
     if(!signature) {
       return callback('Unauthorized');
     }
