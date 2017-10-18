@@ -68,7 +68,7 @@ Resources:
             x-amazon-apigateway-authtype: custom
             x-amazon-apigateway-authorizer:
               authorizerUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${OrchestratorLambda.Arn}/invocations"
-              authorizerResultTtlInSeconds: 300
+              authorizerResultTtlInSeconds: 0
               identitySource: "method.request.header.X-Hub-Signature"
               type: request
         paths:
