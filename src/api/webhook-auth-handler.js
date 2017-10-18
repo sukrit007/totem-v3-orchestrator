@@ -1,8 +1,10 @@
+/* jshint ignore:start */
 /**
  * Custom API Gateway Authentication handler for authorizing Git Webhook Handler
  * See http://docs.aws.amazon.com/apigateway/latest/developerguide/use-custom-authorizer.html#api-gateway-custom-authorizer-types
  * and https://developer.github.com/webhooks/securing/#validating-payloads-from-github
  */
+/* jshint ignore:end */
 'use strict';
 
 const
@@ -27,7 +29,7 @@ class WebHookAuthHandler {
     });
   }
 
-};
+}
 
 bottle.service('api-webhook-auth', WebHookAuthHandler, 'github');
 
