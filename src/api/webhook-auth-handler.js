@@ -24,9 +24,17 @@ class WebHookAuthHandler {
       return callback('Unauthorized');
     }
     return callback(null, {
-      type: 'TOKEN',
-      authorizationToken: 'allow',
-      methodArn: event.methodArn
+      principalId: 'github',
+      policyDocument: {
+        Version: '2012-10-17',
+        Statement: [
+          {
+            Action: 'execute-api:Invoke',
+            Effect: 'Allow',
+            Resource: event.methodArn
+          }
+        ]
+      }
     });
   }
 
