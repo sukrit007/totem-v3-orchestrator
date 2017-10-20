@@ -73,7 +73,7 @@ describe('GithubService', () => {
             name: 'web',
             type: 'Repository',
             config: {
-              'content_type': 'application/json',
+              'content_type': 'json',
               'insecure_ssl': 0,
               url: `${MOCK_API_URL}/hooks/github`,
               secret: MOCK_HOOK_SECRET
@@ -119,7 +119,7 @@ describe('GithubService', () => {
             name: 'web',
             type: 'Repository',
             config: {
-              'content_type': 'application/json',
+              'content_type': 'json',
               'insecure_ssl': 0,
               url: `${MOCK_API_URL}/hooks/github`,
               secret: MOCK_HOOK_SECRET
