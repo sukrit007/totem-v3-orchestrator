@@ -11,14 +11,8 @@ const
 module.exports.handler = (event, context, callback) => {
   let apiHandler;
 
-  // Check for Authorization Request
-  if(event.type === 'REQUEST') {
-    apiHandler = bottle.container['api-webhook-auth'];
-  }
-  else {
-    // Try to lookup directly using path mapping
-    apiHandler = bottle.container[`api-${event.path}`];
-  }
+  // Try to lookup directly using path mapping
+  apiHandler = bottle.container[`api-${event.path}`];
 
   if(!apiHandler) {
     // Try custom registration

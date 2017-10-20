@@ -3,6 +3,8 @@
 const
   constants = require('../common/constants'),
   HttpStatus = require('http-status-codes'),
+  apiError = require('./error'),
+  error = require('../services/error'),
   bottle = constants.BOTTLE_CONTAINER;
 
 /**
@@ -10,11 +12,17 @@ const
  */
 class GitWebhookHandler {
 
-  constructor() {
+  constructor(githubService) {
+    this.githubService = githubService;
   }
 
   handle(event, context, callback) {
-    callback(null, {
+    let headers = event.headers;
+    let signature = headers[constants.HEADER_HUB_SIGNATURE];
+    if(!signature || this.githubService.validateHookSignature(event.body, signature)) {
+      return apiError.handleError(new error.WebhookUnauthorized(), callback);
+    }
+    return callback(null, {
       statusCode: HttpStatus.ACCEPTED,
       body: JSON.stringify({
         triage: {
@@ -26,6 +34,6 @@ class GitWebhookHandler {
   }
 }
 
-bottle.service('api-/hooks/github', GitWebhookHandler);
+bottle.service('api-/hooks/github', GitWebhookHandler, 'github');
 
 module.exports = GitWebhookHandler;

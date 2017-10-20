@@ -7,6 +7,9 @@ github:
 aws:
   region: AWS_REGION
 
+gitHookStateMachine:
+  arn: GIT_HOOK_STATE_MACHINE
+
 tests:
   functional:
     orchestratorApiId: ORCHESTRATOR_API_ID

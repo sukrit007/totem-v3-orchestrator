@@ -210,15 +210,6 @@ Resources:
             Action:
               - 'sts:AssumeRole'
       Path: /
-      Policies:
-        - PolicyName: ApiGatewayAccess
-          PolicyDocument:
-            Statement:
-              - Effect: Allow
-                Action:
-                  - 'states:*'
-                Resource: '*'
-
 
 Outputs:
   OrchestratorLambdaRoleArn:

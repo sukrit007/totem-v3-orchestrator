@@ -17,6 +17,10 @@ github:
       # secret: "Should be injected from env variable"
       # url: "Will automatically be injected from the orchestrator setup code"
 
+gitHookStateMachine:
+  # OVerride this from environment variable
+  arn: ''
+
 tests:
   functional:
     github: {}
