@@ -12,6 +12,8 @@ const
   glob = require('glob'),
   config = require('config'),
   GitHub = require('github-api'),
+  _ = require('lodash'),
+  AWS = require('aws-sdk'),
   path = require('path');
 
 // Load all modules (to ensure all bottle services are loaded)
@@ -25,6 +27,8 @@ module.exports.createHandler = () => {
   bottle.value('githubApi', new GitHub({
     token: config.github.token
   }));
+
+  bottle.value('stepFunctions', new AWS.StepFunctions(_.merge({}, config.aws)));
 
   // Return the handler
   return (event, context, callback) => {

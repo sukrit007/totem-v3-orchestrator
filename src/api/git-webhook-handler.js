@@ -5,6 +5,8 @@ const
   HttpStatus = require('http-status-codes'),
   apiError = require('./error'),
   error = require('../services/error'),
+  _ = require('lodash'),
+  config = require('config'),
   bottle = constants.BOTTLE_CONTAINER;
 
 /**
@@ -12,8 +14,10 @@ const
  */
 class GitWebhookHandler {
 
-  constructor(githubService) {
+  constructor(githubService, stepFunctions, stateMachineConfig) {
     this.githubService = githubService;
+    this.stepFunctions = stepFunctions;
+    this.stateMachineConfig = _.merge({}, config.gitHookStateMachine, stateMachineConfig);
   }
 
   handle(event, context, callback) {
@@ -22,18 +26,21 @@ class GitWebhookHandler {
     if(!signature || !this.githubService.validateHookSignature(event.body, signature)) {
       return apiError.handleError(new error.WebhookUnauthorized(), callback);
     }
-    return callback(null, {
-      statusCode: HttpStatus.ACCEPTED,
-      body: JSON.stringify({
-        triage: {
-          event: event,
-          context: context
-        }
+    this.stepfunctions.startExecution({
+      input: event.body,
+      stateMachineArn: this.stateMachineConfig.arn
+    }).promise()
+      .then(data => {
+        return callback(null, {
+          statusCode: HttpStatus.ACCEPTED,
+          body: JSON.stringify(data)
+        });
       })
-    });
+      .catch(err => apiError.handleError(err, callback));
+
   }
 }
 
-bottle.service('api-/hooks/github', GitWebhookHandler, 'github');
+bottle.service('api-/hooks/github', GitWebhookHandler, 'github', 'stepFunctions');
 
 module.exports = GitWebhookHandler;
