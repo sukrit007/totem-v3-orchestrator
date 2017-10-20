@@ -26,7 +26,7 @@ class GitWebhookHandler {
     if(!signature || !this.githubService.validateHookSignature(event.body, signature)) {
       return apiError.handleError(new error.WebhookUnauthorized(), callback);
     }
-    this.stepfunctions.startExecution({
+    this.stepFunctions.startExecution({
       input: event.body,
       stateMachineArn: this.stateMachineConfig.arn
     }).promise()
