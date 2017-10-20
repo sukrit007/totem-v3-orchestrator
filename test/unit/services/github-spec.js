@@ -169,7 +169,7 @@ describe('GithubService', () => {
     });
 
     it('should return false if signature does not match', () => {
-      return service.validateHookSignature(MOCK_PAYLOAD,`sha1=${'d'.repeat(40)}`)
+      return service.validateHookSignature(MOCK_PAYLOAD,`sha1=${'d'.repeat(40)}`);
       return service.validateHookSignature(MOCK_PAYLOAD,`sha1=${'d'.repeat(40)}`)
         .should.equals(false);
     });
