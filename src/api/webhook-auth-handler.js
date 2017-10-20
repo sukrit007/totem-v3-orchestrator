@@ -23,7 +23,7 @@ class WebHookAuthHandler {
   handle(event, context, callback) {
     let headers = event.headers;
     let signature = headers[constants.HEADER_HUB_SIGNATURE];
-    if(!signature || this.githubService.validateHookSignature()) {
+    if(!signature || this.githubService.validateHookSignature(event.body, signature)) {
       return callback(constants.ERROR_CODE_UNAUTHORIZED);
     }
     return callback(null, {
