@@ -17,9 +17,9 @@ class GitWebhookHandler {
   }
 
   handle(event, context, callback) {
-    let headers = event.headers;
+    let headers = event.headers || {};
     let signature = headers[constants.HEADER_HUB_SIGNATURE];
-    if(!signature || this.githubService.validateHookSignature(event.body, signature)) {
+    if(!signature || !this.githubService.validateHookSignature(event.body, signature)) {
       return apiError.handleError(new error.WebhookUnauthorized(), callback);
     }
     return callback(null, {
