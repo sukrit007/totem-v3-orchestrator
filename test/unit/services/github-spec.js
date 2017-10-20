@@ -14,6 +14,8 @@ const
   MOCK_HOOK_ID = 123458,
   MOCK_OWNER = 'mock-owner',
   MOCK_HOOK_SECRET = 'mock-secret',
+  MOCK_PAYLOAD = `{"ref": "refs/heads/master"}`,
+  MOCK_PAYLOAD_SIGNATURE='sha1=d62588014020e33f70ca7f24f050b03df95a11de',
   MOCK_GITHUB_HOOK_URL = 'https://mock-github-webhook-url';
 
 describe('GithubService', () => {
@@ -148,6 +150,28 @@ describe('GithubService', () => {
       // Test
       return service.setupWebhook(MOCK_OWNER, MOCK_REPO, MOCK_API_URL)
         .should.eventually.be.rejectedWith(err);
+    });
+
+  });
+
+  describe('validateHookSignature', () => {
+
+    it('should return true if payload signature matches', () => {
+      return service.validateHookSignature(MOCK_PAYLOAD, MOCK_PAYLOAD_SIGNATURE).should.equals(true);
+    });
+
+    it('should return false if signature is not provided', () => {
+      return service.validateHookSignature(MOCK_PAYLOAD).should.equals(false);
+    });
+
+    it('should return false if signature length does not match', () => {
+      return service.validateHookSignature(MOCK_PAYLOAD,'sha1=fake').should.equals(false);
+    });
+
+    it('should return false if signature does not match', () => {
+      return service.validateHookSignature(MOCK_PAYLOAD,`sha1=${'d'.repeat(40)}`)
+      return service.validateHookSignature(MOCK_PAYLOAD,`sha1=${'d'.repeat(40)}`)
+        .should.equals(false);
     });
 
   });

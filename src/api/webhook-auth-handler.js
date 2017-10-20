@@ -11,6 +11,9 @@ const
   constants = require('../common/constants'),
   bottle = constants.BOTTLE_CONTAINER;
 
+/**
+ * Handler for authorizing git webhooks
+ */
 class WebHookAuthHandler {
 
   constructor(githubService) {
@@ -19,9 +22,9 @@ class WebHookAuthHandler {
 
   handle(event, context, callback) {
     let headers = event.headers;
-    let signature = headers['X-Hub-Signature'];
-    if(!signature) {
-      return callback('Unauthorized');
+    let signature = headers[constants.HEADER_HUB_SIGNATURE];
+    if(!signature || this.githubService.validateHookSignature()) {
+      return callback(constants.ERROR_CODE_UNAUTHORIZED);
     }
     return callback(null, {
       principalId: 'github',

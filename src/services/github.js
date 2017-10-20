@@ -6,6 +6,7 @@ const
   logger = require('../common/logger'),
   bottle = constants.BOTTLE_CONTAINER,
   HttpStatus = require('http-status-codes'),
+  crypto = require('crypto'),
   error = require('./error'),
   _ = require('lodash');
 
@@ -69,6 +70,27 @@ class GithubService {
         }
         throw err;
       });
+  }
+
+  /**
+   * Validates the signature for incoming webhook using
+   * https://developer.github.com/webhooks/securing/#validating-payloads-from-github
+   * @param payload
+   * @param inputSignature
+   */
+  validateHookSignature(rawPayload, inputSignature) {
+    let digest = crypto
+      .createHmac('sha1', this.hookDef.config.secret)
+      .update(rawPayload)
+      .digest('hex');
+
+    let calculatedSignature = `sha1=${digest}`;
+    if(!inputSignature || calculatedSignature.length !== inputSignature.length) {
+      return false;
+    }
+    return crypto.timingSafeEqual(
+      Buffer.from(calculatedSignature),
+      Buffer.from(inputSignature));
   }
 }
 
