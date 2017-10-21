@@ -9,9 +9,8 @@ const
   bottle = constants.BOTTLE_CONTAINER;
 
 module.exports.handler = (event, context, callback) => {
-  event.parsedBody = JSON.parse(event.body || '{}');
 
-  let taskEvent = event.parsedBody.event;
+  let taskEvent = event.event;
 
   let taskHandler = bottle.container[`tasks-event-${taskEvent}`];
   if(!taskHandler) {
