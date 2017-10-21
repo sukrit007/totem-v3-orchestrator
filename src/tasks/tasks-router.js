@@ -5,12 +5,18 @@
 
 const
   constants = require('../common/constants'),
+  error = require('../services/error'),
   bottle = constants.BOTTLE_CONTAINER;
 
 module.exports.handler = (event, context, callback) => {
-  let taskHandler;
+  event.parsedBody = JSON.parse(event.body || '{}');
 
-  // Try to lookup directly using path mapping
-  return callback();
+  let taskEvent = event.parsedBody.event;
+
+  let taskHandler = bottle.container[`tasks-event-${taskEvent}`];
+  if(!taskHandler) {
+    throw new error.EventHandlerNotRegistered();
+  }
+  return taskHandler.handle(event, context, callback);
 
 };

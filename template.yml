@@ -259,12 +259,17 @@ Resources:
     Properties:
       DefinitionString: !Sub |-
         {
-          "StartAt": "GitHookBegin",
+          "StartAt": "InitializeBranch",
           "States": {
-            "GitHookBegin": {
+            "InitializeBranch": {
                "Type": "Task",
                "Resource": "${OrchestratorTasks.Arn}",
-               "End": true
+               "Next": "SetupPipeline"
+            },
+            "SetupPipeline": {
+              "Type": "Task",
+              "Resource": "${OrchestratorTasks.Arn}",
+              "End": true
             }
           }
         }
