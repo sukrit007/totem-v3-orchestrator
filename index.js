@@ -7,4 +7,7 @@ const
   app = require('./src/app');
 
 
-module.exports.handler = app.createHandler();
+module.exports = {
+  routesHandler: app.createRoutesHandler(),
+  tasksHandler: app.createTasksHandler()
+};

@@ -83,7 +83,7 @@ Resources:
                 responses:
                   default:
                     statusCode: 200
-                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${OrchestratorLambda.Arn}/invocations"
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${OrchestratorRoutes.Arn}/invocations"
                 passthroughBehavior: when_no_match
                 httpMethod: POST
                 type: aws_proxy
@@ -114,7 +114,7 @@ Resources:
                 responses:
                   default:
                     statusCode: 202
-                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${OrchestratorLambda.Arn}/invocations"
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${OrchestratorRoutes.Arn}/invocations"
                 passthroughBehavior: when_no_match
                 httpMethod: POST
                 type: aws_proxy
@@ -164,7 +164,7 @@ Resources:
                 responses:
                   default:
                     statusCode: 202
-                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${OrchestratorLambda.Arn}/invocations"
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${OrchestratorRoutes.Arn}/invocations"
                 passthroughBehavior: when_no_match
                 httpMethod: POST
                 type: aws_proxy
@@ -211,10 +211,10 @@ Resources:
               - hookId
             additionalProperties: false
 
-  OrchestratorLambda:
+  OrchestratorRoutes:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: index.handler
+      Handler: index.routesHandler
       Runtime: nodejs6.10
       Environment:
         Variables:
@@ -243,6 +243,17 @@ Resources:
             Method: put
             RestApiId: !Ref ApiGateway
 
+  OrchestratorTasks:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.tasksHandler
+      Runtime: nodejs6.10
+      Environment:
+        Variables:
+          GITHUB_TOKEN: !Ref GithubOauthToken
+      Role:
+        Fn::ImportValue: !Sub "${OrchestratorEnvironmentStack}-OrchestratorLambdaRoleArn"
+
   GitHooksStateMachine:
     Type: AWS::StepFunctions::StateMachine
     Properties:
@@ -252,7 +263,7 @@ Resources:
           "States": {
             "GitHookBegin": {
                "Type": "Task",
-               "Resource": "${OrchestratorLambda.Arn}",
+               "Resource": "${OrchestratorTasks.Arn}",
                "Result": "Incoming git webhook!",
                "End": true
             }
@@ -279,3 +290,11 @@ Outputs:
   GitHooksStateMachine:
     Description: GitHooks State Machine Arn
     Value: !Ref GitHooksStateMachine
+
+  OrchestratorTasks:
+    Description: OrchestratorTasks Lambda Function
+    Value: !Ref OrchestratorTasks
+
+  OrchestratorRoutes:
+    Description: OrchestratorRoutes Lambda Function
+    Value: !Ref OrchestratorRoutes

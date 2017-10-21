@@ -21,27 +21,48 @@ glob.sync('./src/**/*.js').forEach(file => {
   require(path.resolve(file));
 });
 
-module.exports.createHandler = () => {
-  //Setup common bottle services / values
-
+function registerCommonServices() {
   bottle.value('githubApi', new GitHub({
     token: config.github.token
   }));
-
   bottle.value('stepFunctions', new AWS.StepFunctions(_.merge({}, config.aws)));
+}
 
-  // Return the handler
-  return (event, context, callback) => {
-    logger.info(`GitHook: Begin: `, event, context);
+module.exports = {
 
-    // API Gateway Events
-    if(event.path) {
-      return apiRouter.handler(event, context, callback);
-    }
+  createRoutesHandler: () => {
+    //Setup common bottle services / values
+    registerCommonServices();
 
-    // All other service events
 
-    // Finally, throw error if no event handler found
-    callback(new error.EventHandlerNotRegistered());
-  };
+    // Return the handler
+    return (event, context, callback) => {
+      logger.info(`Routes: Begin: `, event, context);
+
+      // API Gateway Events
+      if(event.path) {
+        return apiRouter.handler(event, context, callback);
+      }
+      // Finally, throw error if no event handler found
+      callback(new error.EventHandlerNotRegistered());
+    };
+  },
+
+  createTasksHandler: () => {
+
+    //Setup common bottle services / values
+    registerCommonServices();
+
+    // Return the handler
+    return (event, context, callback) => {
+      logger.info(`Step Functions: Begin: `, event, context);
+
+      // API Gateway Events
+      if(event.path) {
+        return apiRouter.handler(event, context, callback);
+      }
+      // Finally, throw error if no event handler found
+      callback(new error.EventHandlerNotRegistered());
+    };
+  }
 };

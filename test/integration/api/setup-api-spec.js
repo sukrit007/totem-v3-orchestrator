@@ -6,7 +6,7 @@ const
   HttpStatus = require('http-status-codes'),
   githubFixture = require('./fixtures/github-fixture'),
   nock = require('nock'),
-  handler = require('../../../index').handler;
+  handler = require('../../../index').routesHandler;
 
 const
   HOOK_LOCATION = 'https://api.github.com/repos/test-owner/test-repo/hooks/1',
