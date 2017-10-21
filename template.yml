@@ -246,12 +246,13 @@ Resources:
   GitHooksStateMachine:
     Type: AWS::StepFunctions::StateMachine
     Properties:
-      DefinitionString: |-
+      DefinitionString: !Sub |-
         {
           "StartAt": "GitHookBegin",
           "States": {
             "GitHookBegin": {
-               "Type": "Pass",
+               "Type": "Task",
+               "Resource": "${OrchestratorLambda.Arn}",
                "Result": "Incoming git webhook!",
                "End": true
             }
