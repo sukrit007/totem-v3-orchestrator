@@ -206,6 +206,15 @@ Resources:
                 - !Sub states.${AWS::Region}.amazonaws.com
             Action:
               - 'sts:AssumeRole'
+      Policies:
+        - PolicyName: InvokeFunction
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'lambda:InvokeFunction'
+                Resource: '*'
+
 
   ApiGatewayRole:
     Type: AWS::IAM::Role
