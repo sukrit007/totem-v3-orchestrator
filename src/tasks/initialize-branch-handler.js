@@ -12,9 +12,9 @@ class InitializeBranchHandler {
   constructor() {}
 
   handle(event, context, callback) {
-    return callback(null, JSON.stringify({
+    return callback(null, {
       event: 'initialized-branch'
-    }));
+    });
   }
 }
 
