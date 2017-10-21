@@ -8,6 +8,7 @@ const
   constants = require('./common/constants'),
   bottle = constants.BOTTLE_CONTAINER,
   apiRouter = require('./api/api-router'),
+  tasksRouter = require('./tasks/tasks-router'),
   error = require('./services/error'),
   glob = require('glob'),
   config = require('config'),
@@ -57,10 +58,7 @@ module.exports = {
     return (event, context, callback) => {
       logger.info(`Step Functions: Begin: `, event, context);
 
-      // API Gateway Events
-      if(event.path) {
-        return apiRouter.handler(event, context, callback);
-      }
+      return tasksRouter.handler(event, context, callback);
       // Finally, throw error if no event handler found
       callback(new error.EventHandlerNotRegistered());
     };
