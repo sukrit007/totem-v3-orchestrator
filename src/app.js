@@ -59,8 +59,6 @@ module.exports = {
       logger.info(`Step Functions: Begin: `, event, context);
 
       return tasksRouter.handler(event, context, callback);
-      // Finally, throw error if no event handler found
-      callback(new error.EventHandlerNotRegistered());
     };
   }
 };
