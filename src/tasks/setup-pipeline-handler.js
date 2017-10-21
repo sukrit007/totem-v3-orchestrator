@@ -12,9 +12,9 @@ class SetupPipelineHandler {
   constructor() {}
 
   handle(event, context, callback) {
-    return callback(null, JSON.stringify({
-      event: 'setup-success'
-    }));
+    return callback(null, {
+      event: 'setup-complete'
+    });
   }
 }
 
