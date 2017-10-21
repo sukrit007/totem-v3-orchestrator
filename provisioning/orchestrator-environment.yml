@@ -24,6 +24,15 @@ Resources:
                 - lambda.amazonaws.com
             Action:
               - 'sts:AssumeRole'
+      Path: /
+      Policies:
+        - PolicyName: StateMachineAccess
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'states:*'
+                Resource: '*'
 
   CodeBuildRole:
     Type: AWS::IAM::Role
