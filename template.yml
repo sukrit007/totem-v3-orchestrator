@@ -264,7 +264,6 @@ Resources:
             "GitHookBegin": {
                "Type": "Task",
                "Resource": "${OrchestratorTasks.Arn}",
-               "Result": "Incoming git webhook!",
                "End": true
             }
           }
