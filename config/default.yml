@@ -1,0 +1,22 @@
+# Orchestrator config file. This is parsed using config module (See https://github.com/lorenwest/node-config)
+aws:
+  region: 'us-west-2'
+
+github:
+  hookDef:
+    type: "Repository"
+    name: "web"
+    active: true
+    events:
+      - create
+      - delete
+      - push
+    config:
+      content_type: 'application/json'
+      insecure_ssl: 0
+      # secret: "Should be injected from env variable"
+      # url: "Will automatically be injected from the orchestrator setup code"
+
+tests:
+  functional:
+    github: {}

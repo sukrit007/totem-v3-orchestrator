@@ -1,0 +1,17 @@
+# Maps environment variables to orchestrator config (See https://github.com/lorenwest/node-config/wiki/Environment-Variables)
+github:
+  token: GITHUB_TOKEN
+  hookDef:
+    config:
+      secret: WEBHOOK_SECRET
+aws:
+  region: AWS_REGION
+
+tests:
+  functional:
+    orchestratorApiId: ORCHESTRATOR_API_ID
+    github:
+      testOwner: TEST_OWNER
+      testRepo: TEST_REPO
+      token: GITHUB_TOKEN
+      testBranch: TEST_BRANCH

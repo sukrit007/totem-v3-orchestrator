@@ -1,0 +1,246 @@
+# Cloudformation template for API Gateway and Lambda Function
+# This template is invoked from code pipeline to create new Orchestrator API Gateway
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  GlobalStack:
+    Description: Name of totem global stack
+    Type: String
+    MinLength: 1
+    Default: 'totem-global'
+
+  OrchestratorEnvironmentStack:
+    Description: Name of orchestrator environment stack
+    Type: String
+    MinLength: 1
+    Default: 'totem-orchestrator-environment'
+
+  Environment:
+    Description: Orchestrator environment (development, production, etc)
+    Type: String
+    MinLength: 1
+    Default: 'development'
+
+  GitBranch:
+    Type: String
+    Description: Git branch for source repository
+    MinLength: 1
+    Default: feature_git-workflow
+
+  GithubOauthToken:
+    Type: String
+    NoEcho: true
+    Description: Github Oauth token to configure hooks and pipeline with source github
+    MinLength: 1
+
+  WebhookSecret:
+    Type: String
+    NoEcho: true
+    Description: Webhook secret to be used for configuring webhooks
+    MinLength: 1
+
+Resources:
+  ApiGateway:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: prod
+      DefinitionBody:
+        swagger: 2.0
+        basePath: /
+        info:
+          title: !Sub totem-v3-orchestrator-${Environment}
+          description: !Sub Totem V3 Orchestrator API ${Environment} (${GitBranch})
+          version: 1.0.0
+        schemes:
+          - https
+        x-amazon-apigateway-request-validators:
+          basic:
+            validateRequestBody: true
+            validateRequestParameters: true
+        x-amazon-apigateway-request-validator: basic
+        paths:
+
+          /:
+            get:
+              summary: API Root
+              description: API Root
+              operationId: getRoot
+              produces:
+                - application/json
+              responses:
+                "202":
+                  description: 202 Accepted Response
+                  schema:
+                    $ref: "#/definitions/Empty"
+              x-amazon-apigateway-integration:
+                responses:
+                  default:
+                    statusCode: 200
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${OrchestratorLambda.Arn}/invocations"
+                passthroughBehavior: when_no_match
+                httpMethod: POST
+                type: aws_proxy
+
+
+          /hooks/github:
+            post:
+              summary: Handles github webhook
+              description: Handles github webhook
+              operationId: handleGithubWebhook
+              x-amazon-apigateway-request-validator: basic
+              consumes:
+                - application/json
+              produces:
+                - application/json
+              responses:
+                "202":
+                  description: 202 Accepted Response
+                  schema:
+                    $ref: "#/definitions/Empty"
+              x-amazon-apigateway-integration:
+                responses:
+                  default:
+                    statusCode: 202
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${OrchestratorLambda.Arn}/invocations"
+                passthroughBehavior: when_no_match
+                httpMethod: POST
+                type: aws_proxy
+
+          /owners/{owner}/repos/{repo}/setup:
+            put:
+              summary: Create or update repository webhooks for totem-v3
+              description: Create or update repository webhooks for totem-v3
+              operationId: setupWebhook
+              consumes:
+                - application/vnd.totem.orchestrator.setup.v1+json
+                - application/json
+              x-amazon-apigateway-request-validator: basic
+              parameters:
+                - name: body
+                  in: body
+                  description: Setup parameters
+                  required: true
+                  schema:
+                    $ref: '#/definitions/SetupParameters'
+                - name: owner
+                  in: path
+                  description: Github owner (e.g. totem)
+                  required: true
+                  type: string
+                  minLength: 1
+                  maxLength: 255
+                - name: repo
+                  in: path
+                  description: Github repository (e.g. totem-demo)
+                  required: true
+                  type: string
+                  minLength: 1
+                  maxLength: 255
+              produces:
+                - application/json
+              responses:
+                "200":
+                  description: Success Response
+                  schema:
+                    $ref: "#/definitions/SetupResponse"
+
+              x-amazon-apigateway-auth:
+                type: aws_iam
+
+              x-amazon-apigateway-integration:
+                responses:
+                  default:
+                    statusCode: 202
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${OrchestratorLambda.Arn}/invocations"
+                passthroughBehavior: when_no_match
+                httpMethod: POST
+                type: aws_proxy
+
+        definitions:
+          Empty:
+            type: object
+            title: Empty Schema
+
+          SetupParameters:
+            type: object
+            title: Setup Parameters
+            properties:
+              apiUrl:
+                type: string
+                description: Base API URL for setup
+                minLength: 1
+                maxLength: 512
+              type:
+                description: Type of setup
+                default: 'github'
+                enum:
+                  - github
+            additionalProperties: false
+
+          SetupResponse:
+            type: object
+            title: Setup Response
+            properties:
+              location:
+                type: string
+                description: Github webhook location
+                minLength: 1
+              hookUrl:
+                type: string
+                description: Configured hook url
+                minLength: 1
+              hookId:
+                type: number
+                description: Id of the configured hook
+            required:
+              - location
+              - hookUrl
+              - hookId
+            additionalProperties: false
+
+  OrchestratorLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs6.10
+      Environment:
+        Variables:
+          GITHUB_TOKEN: !Ref GithubOauthToken
+          WEBHOOK_SECRET: !Ref WebhookSecret
+      Role:
+        Fn::ImportValue: !Sub "${OrchestratorEnvironmentStack}-OrchestratorLambdaRoleArn"
+      Events:
+        RootApi:
+          Type: Api
+          Properties:
+            Path: '/'
+            Method: get
+            RestApiId: !Ref ApiGateway
+        WebhookApi:
+          Type: Api
+          Properties:
+            Path: '/hooks/github'
+            Method: post
+            RestApiId: !Ref ApiGateway
+        SetupApi:
+          Type: Api
+          Properties:
+            Path: '/owners/{owner}/repos/{repo}/setup'
+            Method: put
+            RestApiId: !Ref ApiGateway
+
+Outputs:
+  ApiUrl:
+    Description: URL of your API endpoint
+    Value: !Join
+      - ''
+      - - https://
+        - !Ref ApiGateway
+        - '.execute-api.'
+        - !Ref 'AWS::Region'
+        - .amazonaws.com/prod
+
+  ApiGateway:
+    Description: ApiGateway API ID
+    Value: !Ref ApiGateway
