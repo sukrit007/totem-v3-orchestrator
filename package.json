@@ -36,7 +36,7 @@
   },
   "devDependencies": {
     "aws4": "^1.6.0",
-    "chai": "^3.5.0",
+    "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
     "chai-properties": "^1.2.1",
     "crypto-js": "^3.1.9-1",
