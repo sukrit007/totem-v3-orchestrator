@@ -13,11 +13,11 @@ PROFILE=[AWS_CLI_PROFILE]
 TOTEM_BUCKET="$(aws --profile=$PROFILE cloudformation describe-stack-resource \
   --logical-resource-id=TotemBucket \
   --stack-name=totem-global \
-  --output text | tail -1 | awk '{print $1}')" &&
+  --output text | tail -1 | awk '{print $5}')" &&
 
 OUTPUT_TEMPLATE="$TOTEM_BUCKET/cloudformation/totem-environment.yml" && 
 
-aws --profile=$PROFILE s3 cp ./modules/totem-v3/provisioning/totem-environment.yml s3://$OUTPUT_TEMPLATE &&
+aws --profile=$PROFILE s3 cp ./provisioning/totem-environment.yml s3://$OUTPUT_TEMPLATE &&
 
 aws --profile=$PROFILE cloudformation create-stack \
   --template-url=https://s3.amazonaws.com/$OUTPUT_TEMPLATE \
@@ -58,11 +58,11 @@ WEBHOOK_SECRET=[WEBHOOK_SECRET]
 TOTEM_BUCKET="$(aws --profile=$PROFILE cloudformation describe-stack-resource \
   --logical-resource-id=TotemBucket \
   --stack-name=totem-global \
-  --output text | tail -1 | awk '{print $1}')" &&
+  --output text | tail -1 | awk '{print $5}')" &&
 
 OUTPUT_TEMPLATE="$TOTEM_BUCKET/cloudformation/totem-orchestrator-pipeline-development.yml" && 
 
-aws --profile=$PROFILE s3 cp ./modules/totem-v3-orchestrator/provisioning/orchestrator-pipeline.yml s3://$OUTPUT_TEMPLATE &&
+aws --profile=$PROFILE s3 cp ./provisioning/orchestrator-pipeline.yml s3://$OUTPUT_TEMPLATE &&
 
 aws --profile=$PROFILE cloudformation create-stack \
   --template-url=https://s3.amazonaws.com/$OUTPUT_TEMPLATE \

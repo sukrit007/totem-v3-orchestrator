@@ -18,6 +18,7 @@ See [Totem V3 Architecture](https://github.com/totem/totem-v3/tree/develop/archi
 - [node 6.10](https://nodejs.org)
 - [npm 5.x](https://www.npmjs.com/package/npm5)
 - [gulp-cli](https://www.npmjs.com/package/gulp-cli/tutorial)
+- [aws-cli 1.14+](https://aws.amazon.com/cli/)
  
 ## Build
  
