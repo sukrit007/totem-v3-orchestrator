@@ -265,22 +265,24 @@ Resources:
   GitHooksStateMachine:
     Type: AWS::StepFunctions::StateMachine
     Properties:
-      DefinitionString: !Sub |-
-        {
-          "StartAt": "InitializeBranch",
-          "States": {
-            "InitializeBranch": {
-               "Type": "Task",
-               "Resource": "${InitializeBranchTask.Arn}",
-               "Next": "SetupPipeline"
-            },
-            "SetupPipeline": {
-              "Type": "Task",
-              "Resource": "${SetupPipelineTask.Arn}",
-              "End": true
+      DefinitionString: !Sub
+        - |
+          {
+            "StartAt": "InitializeBranch",
+            "States": {
+              "InitializeBranch": {
+                 "Type": "Task",
+                 "Resource": "${InitializeBranchTask.Arn}",
+                 "Next": "SetupPipeline"
+              },
+              "SetupPipeline": {
+                "Type": "Task",
+                "Resource": "${SetupPipelineTask.Arn}",
+                "End": true
+              }
             }
           }
-        }
+        - {}
       RoleArn:
         Fn::ImportValue: !Sub "${OrchestratorEnvironmentStack}-StepFunctionRoleArn"
 
