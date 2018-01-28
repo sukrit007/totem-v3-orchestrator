@@ -245,7 +245,7 @@ Resources:
 
   InitializeBranchTask:
     Type: AWS::Serverless::Function
-    Properties: &InitializeBranchProperties
+    Properties:
       Handler: index.initializeBranchTask
       Runtime: nodejs6.10
       Environment:
@@ -256,7 +256,7 @@ Resources:
 
   SetupPipelineTask:
     Type: AWS::Serverless::Function
-    Properties: &InitializeBranchProperties
+    Properties:
       Handler: index.setupPipelineTask
       Runtime: nodejs6.10
       Role:
