@@ -2,7 +2,7 @@
 
 ### Environment stack
 
-#### New Environment Stack
+#### Create/Update Environment Stack
 This step assumes that you have already created [global resources stack](./global-resources-stack).
 To spin up new environment stack, execute the following command from [parent folder](..): 
 
@@ -15,38 +15,28 @@ TOTEM_BUCKET="$(aws --profile=$PROFILE cloudformation describe-stack-resource \
   --stack-name=totem-global \
   --output text | tail -1 | awk '{print $5}')" &&
 
-OUTPUT_TEMPLATE="$TOTEM_BUCKET/cloudformation/totem-orchestrator-environment.yml" && 
-
-aws --profile=$PROFILE s3 cp ./totem-environment.yml s3://$OUTPUT_TEMPLATE &&
-
-aws --profile=$PROFILE cloudformation create-stack \
-  --template-url=https://s3.amazonaws.com/$OUTPUT_TEMPLATE \
-  --stack-name=totem-orchestrator-environment \
+aws --profile=$PROFILE cloudformation deploy \
   --capabilities=CAPABILITY_NAMED_IAM \
+  --template-file=./totem-environment.yml \
+  --s3-bucket="$TOTEM_BUCKET" \
+  --s3-prefix="cloudformation/totem-orchestrator/" \
+  --stack-name=totem-orchestrator-environment \
   --tags \
-    "Key=app,Value=totem-v3" \
-    "Key=env,Value=development" \
-    "Key=client,Value=totem" \
-    "Key=stacktype,Value=totem-environment"
+    "app=totem-v3-orchestrator" \
+    "env=development" \
+    "client=meltmedia" \
+    "stacktype=totem-environment"
 ```
 
 where:
 - **AWS_CLI_PROFILE**: [AWS CLI Profile](http://docs.aws.amazon.com/cli/latest/userguide/cli-multiple-profiles.html)
-
-
-To monitor the status of the stack creation, use command:
-
-```bash
-aws --profile=contrail cloudformation describe-stacks \
-  --stack-name=totem-environment  
-```
 
 Note:
 - You must modify tags for appropriate totem cluster
 
 ## Setup Orchestrator Pipeline
 
-### Create new orchestrator pipeline
+### Create/Update orchestrator pipeline
 
 To create a new orchestrator pipeline execute following command: 
 
@@ -61,61 +51,28 @@ TOTEM_BUCKET="$(aws --profile=$PROFILE cloudformation describe-stack-resource \
   --stack-name=totem-global \
   --output text | tail -1 | awk '{print $5}')" &&
 
-OUTPUT_TEMPLATE="$TOTEM_BUCKET/cloudformation/totem-orchestrator-pipeline-${ENVIRONMENT}.yml" && 
-
-aws --profile=$PROFILE s3 cp ./totem-pipeline.yml s3://$OUTPUT_TEMPLATE &&
-
-aws --profile=$PROFILE cloudformation create-stack \
-  --template-url=https://s3.amazonaws.com/$OUTPUT_TEMPLATE \
+aws --profile=$PROFILE cloudformation deploy \
+  --template-file=./totem-pipeline.yml \
+  --s3-bucket="$TOTEM_BUCKET" \
+  --s3-prefix="cloudformation/totem-orchestrator/" \
   --stack-name=totem-orchestrator-pipeline-${ENVIRONMENT} \
-  --parameters \
-    "ParameterKey=GithubOauthToken,ParameterValue=${GITHUB_OAUTH_TOKEN}" \
-    "ParameterKey=WebhookSecret,ParameterValue=${WEBHOOK_SECRET}" \
-    "ParameterKey=GitBranch,ParameterValue=feature_pipeline" \
-    "ParameterKey=TestGitRepo,ParameterValue=totem-demo" \
-    "ParameterKey=TestGitOwner,ParameterValue=totem" \
   --tags \
-    "Key=app,Value=totem-v3-orchestrator" \
-    "Key=env,Value=${ENVIRONMENT}" \
-    "Key=client,Value=meltmedia" \
-    "Key=stacktype,Value=totem-orchestrator-pipeline"
+    "app=totem-v3-orchestrator" \
+    "env=${ENVIRONMENT}" \
+    "client=meltmedia" \
+    "stacktype=totem-pipeline" \
+  --parameter-overrides \
+    "GitBranch=develop" \
+    "GithubOauthToken=${GITHUB_OAUTH_TOKEN}" \
+    "WebhookSecret=${WEBHOOK_SECRET}" \
+    "TestGitRepo=totem-demo" \
+    "TestGitOwner=totem"
 ```
 where:
 - **ENVIRONMENT**: Environment for orchestrator (feature, development, production)
 - **GITHUB_OAUTH_TOKEN**: Personal oauth token to access github repositories and for configuring webhooks.
 - **WEBHOOK_SECRET**: Secret used for configuring totem-v3 github webhooks
 - **AWS_CLI_PROFILE**: [AWS CLI Profile](http://docs.aws.amazon.com/cli/latest/userguide/cli-multiple-profiles.html)
-
-To monitor the status of the stack creation, use command:
-
-```bash
-ENVIRONMENT=[ENVIRONMENT]
-PROFILE=[AWS_CLI_PROFILE]
-aws --profile=$PROFILE cloudformation describe-stacks \
-  --stack-name=totem-orchestrator-pipeline-${ENVIRONMENT}
-```
-
-where:
-- **ENVIRONMENT**: Environment for orchestrator (feature, development, production)
-- **AWS_CLI_PROFILE**: [AWS CLI Profile](http://docs.aws.amazon.com/cli/latest/userguide/cli-multiple-profiles.html)
-
-
-### Update existing orchestrator pipeline
-
-```bash
-ENVIRONMENT=[ENVIRONMENT]
-PROFILE=[AWS_CLI_PROFILE]
-aws --profile=$PROFILE cloudformation deploy \
-  --template-file=./totem-pipeline.yml \
-  --stack-name=totem-orchestrator-pipeline-${ENVIRONMENT} \
-  --parameter-overrides \
-    "GitBranch=develop"
-```
-
-where:
-- **ENVIRONMENT**: Environment for orchestrator (feature, development, production)
-- **AWS_CLI_PROFILE**: AWS CLI Profile
-
 
 ## Download Swagger Document
 

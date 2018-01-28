@@ -144,7 +144,7 @@ Resources:
         Fn::ImportValue: !Sub "${OrchestratorEnvironmentStack}-CodeBuildRole"
       Source:
         Type: CODEPIPELINE
-        BuildSpec: 'totem-totem-buildspec-functional-test.yml'
+        BuildSpec: 'totem-buildspec-functional-test.yml'
       TimeoutInMinutes: 5
 
   CodePipeline:
