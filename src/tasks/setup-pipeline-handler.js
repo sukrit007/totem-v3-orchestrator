@@ -18,6 +18,6 @@ class SetupPipelineHandler {
   }
 }
 
-bottle.service('tasks-event-initialized-branch', SetupPipelineHandler);
+bottle.service('tasks-setup-pipeline', SetupPipelineHandler);
 
 module.exports = SetupPipelineHandler;

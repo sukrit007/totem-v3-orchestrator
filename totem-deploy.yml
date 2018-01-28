@@ -243,16 +243,22 @@ Resources:
             Method: put
             RestApiId: !Ref ApiGateway
 
-  OrchestratorTasks:
+  InitializeBranchTask:
     Type: AWS::Serverless::Function
-    Properties:
-      Handler: index.tasksHandler
+    Properties: &InitializeBranchProperties
+      Handler: index.initializeBranchTask
       Runtime: nodejs6.10
       Environment:
         Variables:
           GITHUB_TOKEN: !Ref GithubOauthToken
       Role:
         Fn::ImportValue: !Sub "${OrchestratorEnvironmentStack}-OrchestratorLambdaRoleArn"
+
+  SetupPipelineTask:
+    Type: AWS::Serverless::Function
+    Properties:
+      <<: *InitializeBranchProperties
+      Handler: index.setupPipelineTask
 
   GitHooksStateMachine:
     Type: AWS::StepFunctions::StateMachine
@@ -263,12 +269,12 @@ Resources:
           "States": {
             "InitializeBranch": {
                "Type": "Task",
-               "Resource": "${OrchestratorTasks.Arn}",
+               "Resource": "${InitializeBranchTask.Arn}",
                "Next": "SetupPipeline"
             },
             "SetupPipeline": {
               "Type": "Task",
-              "Resource": "${OrchestratorTasks.Arn}",
+              "Resource": "${SetupPipelineTask.Arn}",
               "End": true
             }
           }
@@ -295,9 +301,13 @@ Outputs:
     Description: GitHooks State Machine Arn
     Value: !Ref GitHooksStateMachine
 
-  OrchestratorTasks:
-    Description: OrchestratorTasks Lambda Function
-    Value: !Ref OrchestratorTasks
+  InitializeBranchTask:
+    Description: InitializeBranchTask Lambda Function
+    Value: !Ref InitializeBranchTask
+
+  SetupPipelineTask:
+    Description: SetupPipelineTask Lambda Function
+    Value: !Ref SetupPipelineTask
 
   OrchestratorRoutes:
     Description: OrchestratorRoutes Lambda Function

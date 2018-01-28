@@ -9,5 +9,6 @@ const
 
 module.exports = {
   routesHandler: app.createRoutesHandler(),
-  tasksHandler: app.createTasksHandler()
+  initializeBranchTask: app.initializeBranchTask(),
+  setupPipelineTask: app.setupPipelineTask()
 };

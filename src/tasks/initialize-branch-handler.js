@@ -18,6 +18,6 @@ class InitializeBranchHandler {
   }
 }
 
-bottle.service('tasks-event-incoming-hook', InitializeBranchHandler);
+bottle.service('tasks-initialize-branch', InitializeBranchHandler);
 
 module.exports = InitializeBranchHandler;

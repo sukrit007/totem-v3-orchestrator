@@ -17,7 +17,7 @@ TOTEM_BUCKET="$(aws --profile=$PROFILE cloudformation describe-stack-resource \
 
 OUTPUT_TEMPLATE="$TOTEM_BUCKET/cloudformation/totem-environment.yml" && 
 
-aws --profile=$PROFILE s3 cp ./provisioning/totem-environment.yml s3://$OUTPUT_TEMPLATE &&
+aws --profile=$PROFILE s3 cp ./totem-environment.yml s3://$OUTPUT_TEMPLATE &&
 
 aws --profile=$PROFILE cloudformation create-stack \
   --template-url=https://s3.amazonaws.com/$OUTPUT_TEMPLATE \
@@ -53,6 +53,7 @@ To create a new orchestrator pipeline execute following command:
 ```bash
 set -o pipefail
 PROFILE=[AWS_CLI_PROFILE]
+ENVIRONMENT=[ENVIRONMENT]
 GITHUB_OAUTH_TOKEN=[GITHUB_OAUTH_TOKEN]
 WEBHOOK_SECRET=[WEBHOOK_SECRET]
 TOTEM_BUCKET="$(aws --profile=$PROFILE cloudformation describe-stack-resource \
@@ -60,9 +61,9 @@ TOTEM_BUCKET="$(aws --profile=$PROFILE cloudformation describe-stack-resource \
   --stack-name=totem-global \
   --output text | tail -1 | awk '{print $5}')" &&
 
-OUTPUT_TEMPLATE="$TOTEM_BUCKET/cloudformation/totem-orchestrator-pipeline-development.yml" && 
+OUTPUT_TEMPLATE="$TOTEM_BUCKET/cloudformation/totem-orchestrator-pipeline-${ENVIRONMENT}.yml" && 
 
-aws --profile=$PROFILE s3 cp ./provisioning/orchestrator-pipeline.yml s3://$OUTPUT_TEMPLATE &&
+aws --profile=$PROFILE s3 cp ./orchestrator-pipeline.yml s3://$OUTPUT_TEMPLATE &&
 
 aws --profile=$PROFILE cloudformation create-stack \
   --template-url=https://s3.amazonaws.com/$OUTPUT_TEMPLATE \
@@ -72,11 +73,12 @@ aws --profile=$PROFILE cloudformation create-stack \
     "ParameterKey=WebhookSecret,ParameterValue=${WEBHOOK_SECRET}" \
   --tags \
     "Key=app,Value=totem-v3-orchestrator" \
-    "Key=env,Value=development" \
+    "Key=env,Value=${ENVIRONMENT}" \
     "Key=client,Value=meltmedia" \
     "Key=stacktype,Value=totem-orchestrator-pipeline"
 ```
 where:
+- **ENVIRONMENT**: Environment for orchestrator (feature, development, production)
 - **GITHUB_OAUTH_TOKEN**: Personal oauth token to access github repositories and for configuring webhooks.
 - **WEBHOOK_SECRET**: Secret used for configuring totem-v3 github webhooks
 - **AWS_CLI_PROFILE**: [AWS CLI Profile](http://docs.aws.amazon.com/cli/latest/userguide/cli-multiple-profiles.html)
@@ -84,21 +86,24 @@ where:
 To monitor the status of the stack creation, use command:
 
 ```bash
+ENVIRONMENT=[ENVIRONMENT]
 aws --profile=[aws-cli-profile] cloudformation describe-stacks \
-  --stack-name=totem-orchestrator-pipeline-development
+  --stack-name=totem-orchestrator-pipeline-${ENVIRONMENT}
 ```
 
 ### Update existing orchestrator pipeline
 
 ```bash
+ENVIRONMENT=[ENVIRONMENT]
 aws --profile=[aws-cli-profile] cloudformation deploy \
-  --template-file=./provisioning/orchestrator-pipeline.yml \
-  --stack-name=totem-orchestrator-pipeline-development \
+  --template-file=./totem-pipeline.yml \
+  --stack-name=totem-orchestrator-pipeline-${ENVIRONMENT} \
   --parameter-overrides \
     "GitBranch=develop"
 ```
 
 where:
+- **ENVIRONMENT**: Environment for orchestrator (feature, development, production)
 - **aws-cli-profile**: AWS CLI Profile
 
 
@@ -109,6 +114,7 @@ Once API is deployed, you can download swagger document for the deployed API usi
 ```bash
 set -o pipefail
 PROFILE=[aws-cli-profile]
+ENVIRONMENT=[ENVIRONMENT]
 API_ID="$(aws --profile=$PROFILE cloudformation describe-stack-resource \
   --logical-resource-id=ApiGateway \
   --stack-name=totem-orchestrator-development \
@@ -121,4 +127,5 @@ aws --profile=$PROFILE apigateway get-export \
 ```
 
 where:
+- **ENVIRONMENT**: Environment for orchestrator (feature, development, production)
 - **aws-cli-profile**: AWS CLI Profile

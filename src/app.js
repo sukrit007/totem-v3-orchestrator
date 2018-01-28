@@ -29,6 +29,22 @@ function registerCommonServices() {
   bottle.value('stepFunctions', new AWS.StepFunctions(_.merge({}, config.aws)));
 }
 
+function createTask(taskName) {
+  //Setup common bottle services / values
+  registerCommonServices();
+
+  // Return the handler
+  return (event, context, callback) => {
+    logger.info(`Step Function: ${taskName} Task Begin: `, event, context);
+
+    let taskHandler = bottle.container[`tasks-${taskName}`];
+    if(!taskHandler) {
+      throw new error.EventHandlerNotRegistered();
+    }
+    return taskHandler.handle(event, context, callback);
+  };
+}
+
 module.exports = {
 
   createRoutesHandler: () => {
@@ -49,16 +65,7 @@ module.exports = {
     };
   },
 
-  createTasksHandler: () => {
+  initializeBranchTask: () => createTask('initialize-branch'),
+  setupPipelineTask: () => createTask('setup-pipeline'),
 
-    //Setup common bottle services / values
-    registerCommonServices();
-
-    // Return the handler
-    return (event, context, callback) => {
-      logger.info(`Step Functions: Begin: `, event, context);
-
-      return tasksRouter.handler(event, context, callback);
-    };
-  }
 };
