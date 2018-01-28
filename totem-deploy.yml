@@ -256,9 +256,11 @@ Resources:
 
   SetupPipelineTask:
     Type: AWS::Serverless::Function
-    Properties:
-      <<: *InitializeBranchProperties
+    Properties: &InitializeBranchProperties
       Handler: index.setupPipelineTask
+      Runtime: nodejs6.10
+      Role:
+        Fn::ImportValue: !Sub "${OrchestratorEnvironmentStack}-OrchestratorLambdaRoleArn"
 
   GitHooksStateMachine:
     Type: AWS::StepFunctions::StateMachine
