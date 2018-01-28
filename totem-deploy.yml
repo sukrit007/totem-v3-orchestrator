@@ -26,7 +26,7 @@ Parameters:
     Type: String
     Description: Git branch for source repository
     MinLength: 1
-    Default: feature_git-workflow
+    Default: develop
 
   GithubOauthToken:
     Type: String

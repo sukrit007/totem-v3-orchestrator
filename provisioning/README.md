@@ -62,7 +62,7 @@ aws --profile=$PROFILE cloudformation deploy \
     "client=meltmedia" \
     "stacktype=totem-pipeline" \
   --parameter-overrides \
-    "GitBranch=develop" \
+    "GitBranch=feature_pipeline" \
     "GithubOauthToken=${GITHUB_OAUTH_TOKEN}" \
     "WebhookSecret=${WEBHOOK_SECRET}" \
     "TestGitRepo=totem-demo" \
