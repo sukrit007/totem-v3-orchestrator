@@ -3,7 +3,7 @@
 ### Environment stack
 
 #### Create/Update Environment Stack
-This step assumes that you have already created [global resources stack](./global-resources-stack).
+This step assumes that you have already created [global resources stack](https://github.com/totem/totem-v3/tree/develop/provisioning#creating-global-resources).
 To spin up new environment stack, execute the following command from [parent folder](..): 
 
 
