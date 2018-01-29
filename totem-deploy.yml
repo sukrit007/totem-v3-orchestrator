@@ -274,7 +274,7 @@ Resources:
       DefinitionString: !Sub
         - |
           {
-            "StartAt": "InitializeBranch",
+            "StartAt": "LoadConfig",
             "States": {
               "LoadConfig": {
                  "Type": "Task",
