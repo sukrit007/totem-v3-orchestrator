@@ -54,7 +54,7 @@ TOTEM_BUCKET="$(aws --profile=$PROFILE cloudformation describe-stack-resource \
 aws --profile=$PROFILE cloudformation deploy \
   --template-file=./totem-pipeline.yml \
   --s3-bucket="$TOTEM_BUCKET" \
-  --s3-prefix="cloudformation/totem-orchestrator/" \
+  --s3-prefix="cloudformation/totem-orchestrator" \
   --stack-name=totem-orchestrator-pipeline-${ENVIRONMENT} \
   --tags \
     "app=totem-v3-orchestrator" \
@@ -62,7 +62,7 @@ aws --profile=$PROFILE cloudformation deploy \
     "client=meltmedia" \
     "stacktype=totem-pipeline" \
   --parameter-overrides \
-    "GitBranch=feature_pipeline" \
+    "GitBranch=develop" \
     "GithubOauthToken=${GITHUB_OAUTH_TOKEN}" \
     "WebhookSecret=${WEBHOOK_SECRET}" \
     "TestGitRepo=totem-demo" \
@@ -86,7 +86,7 @@ PROFILE=[AWS_CLI_PROFILE]
 ENVIRONMENT=[ENVIRONMENT]
 API_ID="$(aws --profile=$PROFILE cloudformation describe-stack-resource \
   --logical-resource-id=ApiGateway \
-  --stack-name=totem-orchestrator-development \
+  --stack-name=totem-orchestrator-${ENVIRONMENT} \
   --output text | tail -1 | awk '{print $1}')" &&
 aws --profile=$PROFILE apigateway get-export \
   --rest-api-id=$API_ID \
