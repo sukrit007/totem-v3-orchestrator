@@ -289,7 +289,7 @@ Resources:
             }
           }
         - LoadConfigTaskArn:
-            Fn::ImportValue: !Sub "${ConfigServiceDeployStack}-StepFunctionRoleArn"
+            Fn::ImportValue: !Sub "${ConfigServiceDeployStack}-LoadConfigTaskArn"
       RoleArn:
         Fn::ImportValue: !Sub "${OrchestratorEnvironmentStack}-StepFunctionRoleArn"
 
