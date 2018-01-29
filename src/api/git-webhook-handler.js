@@ -31,7 +31,7 @@ class GitWebhookHandler {
     let body = JSON.parse(event.body);
 
     // We only consume PUSH events for now.  Rest are ignored with HTTP 204
-    if(constants.HEADER_GITHUB_EVENT !== constants.GITHUB_EVENT_PUSH && !body.deleted) {
+    if(constants.HEADER_GITHUB_EVENT !== constants.GITHUB_EVENT_PUSH || body.deleted) {
       return callback(null, {
         statusCode: HttpStatus.NO_CONTENT,
         body: '{}'
