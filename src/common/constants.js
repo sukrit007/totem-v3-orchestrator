@@ -10,5 +10,8 @@ exports = module.exports = {
   BOTTLE_CONTAINER: Bottle.pop(exports.BOTTLE_CONTAINER_NAME),
 
   HEADER_HUB_SIGNATURE: 'X-Hub-Signature',
-  ERROR_CODE_UNAUTHORIZED: 'Unauthorized'
+  HEADER_GITHUB_EVENT: 'X-GitHub-Event',
+  ERROR_CODE_UNAUTHORIZED: 'Unauthorized',
+
+  GITHUB_EVENT_PUSH: 'push'
 };

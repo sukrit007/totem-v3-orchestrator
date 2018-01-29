@@ -19,7 +19,7 @@ aws --profile=$PROFILE cloudformation deploy \
   --capabilities=CAPABILITY_NAMED_IAM \
   --template-file=./totem-environment.yml \
   --s3-bucket="$TOTEM_BUCKET" \
-  --s3-prefix="cloudformation/totem-orchestrator/" \
+  --s3-prefix="cloudformation/totem-orchestrator" \
   --stack-name=totem-orchestrator-environment \
   --tags \
     "app=totem-v3-orchestrator" \
@@ -66,7 +66,8 @@ aws --profile=$PROFILE cloudformation deploy \
     "GithubOauthToken=${GITHUB_OAUTH_TOKEN}" \
     "WebhookSecret=${WEBHOOK_SECRET}" \
     "TestGitRepo=totem-demo" \
-    "TestGitOwner=totem"
+    "TestGitOwner=totem" \
+    "Environment=${ENVIRONMENT}"
 ```
 where:
 - **ENVIRONMENT**: Environment for orchestrator (feature, development, production)
