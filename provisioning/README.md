@@ -67,7 +67,8 @@ aws --profile=$PROFILE cloudformation deploy \
     "WebhookSecret=${WEBHOOK_SECRET}" \
     "TestGitRepo=totem-demo" \
     "TestGitOwner=totem" \
-    "Environment=${ENVIRONMENT}"
+    "Environment=${ENVIRONMENT}" \
+    "ConfigServiceDeployStack=totem-config-service-${ENVIRONMENT}"
 ```
 where:
 - **ENVIRONMENT**: Environment for orchestrator (feature, development, production)

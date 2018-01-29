@@ -8,7 +8,6 @@ const
   constants = require('./common/constants'),
   bottle = constants.BOTTLE_CONTAINER,
   apiRouter = require('./api/api-router'),
-  tasksRouter = require('./tasks/tasks-router'),
   error = require('./services/error'),
   glob = require('glob'),
   config = require('config'),
@@ -65,7 +64,6 @@ module.exports = {
     };
   },
 
-  initializeBranchTask: () => createTask('initialize-branch'),
   setupPipelineTask: () => createTask('setup-pipeline'),
 
 };

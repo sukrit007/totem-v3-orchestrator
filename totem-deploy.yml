@@ -40,6 +40,12 @@ Parameters:
     Description: Webhook secret to be used for configuring webhooks
     MinLength: 1
 
+  ConfigServiceDeployStack:
+    Description: Name of config service deploy stack
+    Type: String
+    MinLength: 1
+    Default: 'totem-config-service-develop'
+
 Resources:
   ApiGateway:
     Type: AWS::Serverless::Api
@@ -270,9 +276,9 @@ Resources:
           {
             "StartAt": "InitializeBranch",
             "States": {
-              "InitializeBranch": {
+              "LoadConfig": {
                  "Type": "Task",
-                 "Resource": "${InitializeBranchTask.Arn}",
+                 "Resource": "${LoadConfigTaskArn}",
                  "Next": "SetupPipeline"
               },
               "SetupPipeline": {
@@ -282,7 +288,8 @@ Resources:
               }
             }
           }
-        - {}
+        - LoadConfigTaskArn:
+            Fn::ImportValue: !Sub "${ConfigServiceDeployStack}-StepFunctionRoleArn"
       RoleArn:
         Fn::ImportValue: !Sub "${OrchestratorEnvironmentStack}-StepFunctionRoleArn"
 

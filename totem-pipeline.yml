@@ -78,6 +78,11 @@ Parameters:
     Description: Webhook secret to be used for configuring webhooks
     MinLength: 1
 
+  ConfigServiceDeployStack:
+    Description: Name of config service deploy stack
+    Type: String
+    MinLength: 1
+    Default: 'totem-config-service-develop'
 
 Resources:
   CodeBuild:
@@ -218,7 +223,8 @@ Resources:
                     "Environment": "${Environment}",
                     "GitBranch": "${GitBranch}",
                     "GithubOauthToken": "${GithubOauthToken}",
-                    "WebhookSecret": "${WebhookSecret}"
+                    "WebhookSecret": "${WebhookSecret}",
+                    "ConfigServiceDeployStack": "${ConfigServiceDeployStack}"
                   }
               RunOrder: 1
 
