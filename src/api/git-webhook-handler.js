@@ -25,13 +25,14 @@ class GitWebhookHandler {
   handle(event, context, callback) {
     let headers = event.headers || {};
     let signature = headers[constants.HEADER_HUB_SIGNATURE];
+    let githubEvent = headers[constants.HEADER_GITHUB_EVENT];
     if(!signature || !this.githubService.validateHookSignature(event.body, signature)) {
       return apiError.handleError(new error.WebhookUnauthorized(), callback);
     }
     let body = JSON.parse(event.body);
 
     // We only consume PUSH events for now.  Rest are ignored with HTTP 204
-    if(constants.HEADER_GITHUB_EVENT !== constants.GITHUB_EVENT_PUSH || body.deleted) {
+    if(githubEvent !== constants.GITHUB_EVENT_PUSH || body.deleted) {
       return callback(null, {
         statusCode: HttpStatus.NO_CONTENT,
         body: '{}'
