@@ -16,7 +16,9 @@ See [Totem V3 Architecture](https://github.com/totem/totem-v3/tree/develop/archi
 
 - [AWS SAM Local](https://github.com/awslabs/aws-sam-local#windows-linux-osx-with-npm-recommended)
 - [node 6.10](https://nodejs.org)
+- [npm 5.x](https://www.npmjs.com/package/npm5)
 - [gulp-cli](https://www.npmjs.com/package/gulp-cli/tutorial)
+- [aws-cli 1.14+](https://aws.amazon.com/cli/)
  
 ## Build
  
@@ -101,3 +103,4 @@ This project uses the [Git Flow](https://confluence.meltdev.com/display/DEV/Git+
 - [AWS SAM Model](https://github.com/awslabs/serverless-application-model)
 - [Lambda Continuous Deploy](http://docs.aws.amazon.com/lambda/latest/dg/automating-deployment.html) 
 - [Codepipeline Cloudformation](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-codepipeline-pipeline.html)
+- [Gateway - Step Functions](http://docs.aws.amazon.com/step-functions/latest/dg/tutorial-api-gateway.html)

@@ -26,7 +26,7 @@ Parameters:
     Type: String
     Description: Git branch for source repository
     MinLength: 1
-    Default: feature_git-workflow
+    Default: develop
 
   GithubOauthToken:
     Type: String
@@ -40,11 +40,18 @@ Parameters:
     Description: Webhook secret to be used for configuring webhooks
     MinLength: 1
 
+  ConfigServiceDeployStack:
+    Description: Name of config service deploy stack
+    Type: String
+    MinLength: 1
+    Default: 'totem-config-service-develop'
+
 Resources:
   ApiGateway:
     Type: AWS::Serverless::Api
     Properties:
       StageName: prod
+      # Need to use embedded swagger. Reason: https://github.com/awslabs/serverless-application-model/issues/79
       DefinitionBody:
         swagger: 2.0
         basePath: /
@@ -59,6 +66,11 @@ Resources:
             validateRequestBody: true
             validateRequestParameters: true
         x-amazon-apigateway-request-validator: basic
+        securityDefinitions:
+          webhook-auth:
+            type: apiKey
+            name: X-Hub-Signature
+            in: header
         paths:
 
           /:
@@ -69,15 +81,15 @@ Resources:
               produces:
                 - application/json
               responses:
-                "202":
-                  description: 202 Accepted Response
+                "200":
+                  description: Success
                   schema:
                     $ref: "#/definitions/Empty"
               x-amazon-apigateway-integration:
                 responses:
                   default:
                     statusCode: 200
-                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${OrchestratorLambda.Arn}/invocations"
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${OrchestratorRoutes.Arn}/invocations"
                 passthroughBehavior: when_no_match
                 httpMethod: POST
                 type: aws_proxy
@@ -89,20 +101,26 @@ Resources:
               description: Handles github webhook
               operationId: handleGithubWebhook
               x-amazon-apigateway-request-validator: basic
+              security:
+                - webhook-auth: []
               consumes:
                 - application/json
               produces:
                 - application/json
               responses:
-                "202":
-                  description: 202 Accepted Response
+                "200":
+                  description: Successfully started the workflow
+                  schema:
+                    $ref: "#/definitions/Empty"
+                "500":
+                  description: Error response
                   schema:
                     $ref: "#/definitions/Empty"
               x-amazon-apigateway-integration:
                 responses:
                   default:
                     statusCode: 202
-                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${OrchestratorLambda.Arn}/invocations"
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${OrchestratorRoutes.Arn}/invocations"
                 passthroughBehavior: when_no_match
                 httpMethod: POST
                 type: aws_proxy
@@ -152,7 +170,7 @@ Resources:
                 responses:
                   default:
                     statusCode: 202
-                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${OrchestratorLambda.Arn}/invocations"
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${OrchestratorRoutes.Arn}/invocations"
                 passthroughBehavior: when_no_match
                 httpMethod: POST
                 type: aws_proxy
@@ -199,15 +217,16 @@ Resources:
               - hookId
             additionalProperties: false
 
-  OrchestratorLambda:
+  OrchestratorRoutes:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: index.handler
+      Handler: index.routesHandler
       Runtime: nodejs6.10
       Environment:
         Variables:
           GITHUB_TOKEN: !Ref GithubOauthToken
           WEBHOOK_SECRET: !Ref WebhookSecret
+          GIT_HOOK_STATE_MACHINE: !Ref GitHooksStateMachine
       Role:
         Fn::ImportValue: !Sub "${OrchestratorEnvironmentStack}-OrchestratorLambdaRoleArn"
       Events:
@@ -230,6 +249,50 @@ Resources:
             Method: put
             RestApiId: !Ref ApiGateway
 
+  InitializeBranchTask:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.initializeBranchTask
+      Runtime: nodejs6.10
+      Environment:
+        Variables:
+          GITHUB_TOKEN: !Ref GithubOauthToken
+      Role:
+        Fn::ImportValue: !Sub "${OrchestratorEnvironmentStack}-OrchestratorLambdaRoleArn"
+
+  SetupPipelineTask:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.setupPipelineTask
+      Runtime: nodejs6.10
+      Role:
+        Fn::ImportValue: !Sub "${OrchestratorEnvironmentStack}-OrchestratorLambdaRoleArn"
+
+  GitHooksStateMachine:
+    Type: AWS::StepFunctions::StateMachine
+    Properties:
+      DefinitionString: !Sub
+        - |
+          {
+            "StartAt": "LoadConfig",
+            "States": {
+              "LoadConfig": {
+                 "Type": "Task",
+                 "Resource": "${LoadConfigTaskArn}",
+                 "Next": "SetupPipeline"
+              },
+              "SetupPipeline": {
+                "Type": "Task",
+                "Resource": "${SetupPipelineTask.Arn}",
+                "End": true
+              }
+            }
+          }
+        - LoadConfigTaskArn:
+            Fn::ImportValue: !Sub "${ConfigServiceDeployStack}-LoadConfigTaskArn"
+      RoleArn:
+        Fn::ImportValue: !Sub "${OrchestratorEnvironmentStack}-StepFunctionRoleArn"
+
 Outputs:
   ApiUrl:
     Description: URL of your API endpoint
@@ -244,3 +307,19 @@ Outputs:
   ApiGateway:
     Description: ApiGateway API ID
     Value: !Ref ApiGateway
+
+  GitHooksStateMachine:
+    Description: GitHooks State Machine Arn
+    Value: !Ref GitHooksStateMachine
+
+  InitializeBranchTask:
+    Description: InitializeBranchTask Lambda Function
+    Value: !Ref InitializeBranchTask
+
+  SetupPipelineTask:
+    Description: SetupPipelineTask Lambda Function
+    Value: !Ref SetupPipelineTask
+
+  OrchestratorRoutes:
+    Description: OrchestratorRoutes Lambda Function
+    Value: !Ref OrchestratorRoutes

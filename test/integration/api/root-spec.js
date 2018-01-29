@@ -5,7 +5,7 @@ require('../../init');
 const
   HttpStatus = require('http-status-codes'),
   pkg = require('../../../package.json'),
-  handler = require('../../../index').handler;
+  handler = require('../../../index').routesHandler;
 
 describe('Root API', () => {
 

@@ -9,9 +9,10 @@ const
   bottle = constants.BOTTLE_CONTAINER;
 
 module.exports.handler = (event, context, callback) => {
+  let apiHandler;
 
   // Try to lookup directly using path mapping
-  let apiHandler = bottle.container[`api-${event.path}`];
+  apiHandler = bottle.container[`api-${event.path}`];
 
   if(!apiHandler) {
     // Try custom registration

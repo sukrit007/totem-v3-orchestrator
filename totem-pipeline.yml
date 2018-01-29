@@ -78,6 +78,11 @@ Parameters:
     Description: Webhook secret to be used for configuring webhooks
     MinLength: 1
 
+  ConfigServiceDeployStack:
+    Description: Name of config service deploy stack
+    Type: String
+    MinLength: 1
+    Default: 'totem-config-service-develop'
 
 Resources:
   CodeBuild:
@@ -111,6 +116,7 @@ Resources:
         Fn::ImportValue: !Sub "${OrchestratorEnvironmentStack}-CodeBuildRole"
       Source:
         Type: CODEPIPELINE
+        BuildSpec: 'totem-buildspec.yml'
       TimeoutInMinutes: 5
 
   CodeBuildFunctionalTest:
@@ -143,7 +149,7 @@ Resources:
         Fn::ImportValue: !Sub "${OrchestratorEnvironmentStack}-CodeBuildRole"
       Source:
         Type: CODEPIPELINE
-        BuildSpec: 'buildspec-functional-test.yml'
+        BuildSpec: 'totem-buildspec-functional-test.yml'
       TimeoutInMinutes: 5
 
   CodePipeline:
@@ -208,7 +214,7 @@ Resources:
                   Fn::ImportValue: !Sub "${OrchestratorEnvironmentStack}-LambdaDeployRoleArn"
                 StackName: !Sub "totem-orchestrator-${Environment}"
                 ChangeSetName: LamdaDeploy
-                TemplatePath: "build::packaged-template.yml"
+                TemplatePath: "build::totem-deploy-package.yml"
                 TemplateConfiguration: "build::template-config.json"
                 ParameterOverrides: !Sub |
                   {
@@ -217,7 +223,8 @@ Resources:
                     "Environment": "${Environment}",
                     "GitBranch": "${GitBranch}",
                     "GithubOauthToken": "${GithubOauthToken}",
-                    "WebhookSecret": "${WebhookSecret}"
+                    "WebhookSecret": "${WebhookSecret}",
+                    "ConfigServiceDeployStack": "${ConfigServiceDeployStack}"
                   }
               RunOrder: 1
 

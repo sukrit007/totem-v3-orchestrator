@@ -12,7 +12,7 @@ describe('App Handler', () => {
   let handler;
 
   beforeEach(() => {
-    handler = app.createHandler();
+    handler = app.createRoutesHandler();
   });
 
   it('should return EventHandlerNotRegistered error when no event handler is registered for the event', done => {

@@ -24,6 +24,15 @@ Resources:
                 - lambda.amazonaws.com
             Action:
               - 'sts:AssumeRole'
+      Path: /
+      Policies:
+        - PolicyName: StateMachineAccess
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'states:*'
+                Resource: '*'
 
   CodeBuildRole:
     Type: AWS::IAM::Role
@@ -135,6 +144,11 @@ Resources:
                   - 'cloudformation:*'
                 Resource: '*'
 
+              - Effect: Allow
+                Action:
+                  - 'states:*'
+                Resource: '*'
+
   CodePipelineRole:
     Type: AWS::IAM::Role
     Properties:
@@ -180,6 +194,41 @@ Resources:
                       - Fn::ImportValue: !Sub "${GlobalStack}-TotemBucket"
                       - "*"
 
+
+  StepFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - !Sub states.${AWS::Region}.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Policies:
+        - PolicyName: InvokeFunction
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'lambda:InvokeFunction'
+                Resource: '*'
+
+
+  ApiGatewayRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - apigateway.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Path: /
+
 Outputs:
   OrchestratorLambdaRoleArn:
     Value: !GetAtt OrchestratorLambdaRole.Arn
@@ -201,3 +250,13 @@ Outputs:
     Value: !GetAtt LambdaDeployRole.Arn
     Export:
       Name: !Sub ${AWS::StackName}-LambdaDeployRoleArn
+
+  StepFunctionRoleArn:
+    Value: !GetAtt StepFunctionRole.Arn
+    Export:
+      Name: !Sub ${AWS::StackName}-StepFunctionRoleArn
+
+  ApiGatewayRoleArn:
+    Value: !GetAtt ApiGatewayRole.Arn
+    Export:
+      Name: !Sub ${AWS::StackName}-ApiGatewayRoleArn
